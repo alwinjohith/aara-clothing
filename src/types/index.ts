@@ -22,7 +22,6 @@ export interface PaginationParams {
 export interface User {
   id: string;
   username: string;
-  passwordHash: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,7 +29,12 @@ export interface User {
 export interface Category {
   id: string;
   name: string;
+  slug: string;
   parentId: string | null;
+  parent?: { id: string; name: string } | null;
+  children?: { id: string; name: string }[];
+  _count?: { children: number; products: number };
+  deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,9 +44,13 @@ export interface Product {
   name: string;
   description: string | null;
   categoryId: string;
+  category?: { id: string; name: string };
   isActive: boolean;
+  deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  variants?: ProductVariant[];
+  _count?: { variants: number };
 }
 
 export interface ProductVariant {
@@ -52,9 +60,16 @@ export interface ProductVariant {
   size: string;
   sku: string;
   stock: number;
-  imageUrl: string | null;
+  images: VariantImage[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface VariantImage {
+  id: string;
+  variantId: string;
+  url: string;
+  createdAt: Date;
 }
 
 export interface Customer {

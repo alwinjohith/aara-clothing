@@ -19,10 +19,12 @@ model User {
 model Category {
   id        String     @id @default(uuid())
   name      String
+  slug      String     @unique
   parentId  String?
   parent    Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children  Category[] @relation("CategoryHierarchy")
   products  Product[]
+  deletedAt DateTime?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 }
@@ -34,24 +36,32 @@ model Product {
   categoryId  String
   category    Category         @relation(fields: [categoryId], references: [id])
   isActive    Boolean          @default(true)
+  deletedAt   DateTime?
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   variants    ProductVariant[]
 }
 
 model ProductVariant {
-  id        String   @id @default(uuid())
+  id        String        @id @default(uuid())
   productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
   color     String
   size      String
-  sku       String   @unique
-  stock     Int      @default(0)
-  imageUrl  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  sku       String        @unique
+  stock     Int           @default(0)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  images    VariantImage[]
   orderItems OrderItem[]
+}
+
+model VariantImage {
+  id        String         @id @default(uuid())
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime       @default(now())
 }
 
 model Customer {

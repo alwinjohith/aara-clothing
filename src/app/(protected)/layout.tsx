@@ -25,12 +25,24 @@ export default async function ProtectedLayout({
           >
             Aara Clothing
           </Link>
-          <nav className="flex items-center gap-4">
+          <nav className="flex items-center gap-6">
             <Link
               href={ROUTES.DASHBOARD}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               Dashboard
+            </Link>
+            <Link
+              href={ROUTES.PRODUCTS}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Products
+            </Link>
+            <Link
+              href={ROUTES.CATEGORIES}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Categories
             </Link>
             <SignOutButton />
           </nav>
