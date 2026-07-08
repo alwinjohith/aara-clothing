@@ -28,7 +28,6 @@ export default async function EditCategoryPage({ params }: Props) {
 }
 
 async function getDescendantIds(id: string): Promise<string[]> {
-  const { getCategoryTree } = await import("@/features/categories/categories-service");
   const all = await getCategoryTree();
   const ids: string[] = [id];
 
