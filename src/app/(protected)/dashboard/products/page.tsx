@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { listProducts } from "@/features/products/products-service";
 import { Button } from "@/components/ui/button";
@@ -28,16 +29,18 @@ export default async function ProductsPage({ searchParams }: Props) {
         </Link>
       </div>
 
-      <ProductsTable
-        data={result.data.map((p) => ({
-          ...p,
-          categoryName: p.category?.name ?? "-",
-          variantCount: p._count?.variants ?? 0,
-        }))}
-        page={result.page}
-        totalPages={result.totalPages}
-        search={search ?? ""}
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProductsTable
+          data={result.data.map((p) => ({
+            ...p,
+            categoryName: p.category?.name ?? "-",
+            variantCount: p._count?.variants ?? 0,
+          }))}
+          page={result.page}
+          totalPages={result.totalPages}
+          search={search ?? ""}
+        />
+      </Suspense>
     </div>
   );
 }

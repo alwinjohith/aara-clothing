@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { listCategories } from "@/features/categories/categories-service";
 import { Button } from "@/components/ui/button";
@@ -28,16 +29,18 @@ export default async function CategoriesPage({ searchParams }: Props) {
         </Link>
       </div>
 
-      <CategoriesTable
-        data={result.data.map((cat) => ({
-          ...cat,
-          parentName: cat.parent?.name ?? null,
-          productCount: cat._count?.products ?? 0,
-        }))}
-        page={result.page}
-        totalPages={result.totalPages}
-        search={search ?? ""}
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <CategoriesTable
+          data={result.data.map((cat) => ({
+            ...cat,
+            parentName: cat.parent?.name ?? null,
+            productCount: cat._count?.products ?? 0,
+          }))}
+          page={result.page}
+          totalPages={result.totalPages}
+          search={search ?? ""}
+        />
+      </Suspense>
     </div>
   );
 }

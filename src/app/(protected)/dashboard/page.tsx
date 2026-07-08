@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { STOCK_THRESHOLDS } from "@/lib/constants";
+import { getDashboardStats } from "@/features/dashboard/dashboard-service";
 import { DashboardWidgets } from "@/features/dashboard/dashboard-widgets";
 
 export default async function DashboardPage() {
@@ -11,36 +10,7 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const [
-    totalProducts,
-    totalVariants,
-    totalCustomers,
-    stockAggregation,
-    lowStockProducts,
-    outOfStockProducts,
-  ] = await Promise.all([
-    prisma.product.count({ where: { deletedAt: null } }),
-    prisma.productVariant.count({
-      where: { product: { deletedAt: null } },
-    }),
-    prisma.customer.count(),
-    prisma.productVariant.aggregate({
-      where: { product: { deletedAt: null } },
-      _sum: { stock: true },
-    }),
-    prisma.productVariant.count({
-      where: {
-        product: { deletedAt: null },
-        stock: { gt: STOCK_THRESHOLDS.OUT, lte: STOCK_THRESHOLDS.LOW },
-      },
-    }),
-    prisma.productVariant.count({
-      where: {
-        product: { deletedAt: null },
-        stock: { equals: STOCK_THRESHOLDS.OUT },
-      },
-    }),
-  ]);
+  const stats = await getDashboardStats();
 
   return (
     <div className="p-6">
@@ -50,16 +20,7 @@ export default async function DashboardPage() {
           Welcome back, {session.user.username}
         </p>
       </div>
-      <DashboardWidgets
-        stats={{
-          totalProducts,
-          totalVariants,
-          totalCustomers,
-          totalStockUnits: stockAggregation._sum.stock ?? 0,
-          lowStockProducts,
-          outOfStockProducts,
-        }}
-      />
+      <DashboardWidgets stats={stats} />
     </div>
   );
 }
