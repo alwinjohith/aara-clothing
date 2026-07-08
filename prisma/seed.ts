@@ -1,3 +1,5 @@
+import "dotenv/config";
+import { PrismaNeonHttp } from "@prisma/adapter-neon";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -10,7 +12,11 @@ import bcrypt from "bcryptjs";
  * Usage: npx prisma db seed
  */
 
-const prisma = new PrismaClient();
+const adapter = new PrismaNeonHttp(process.env.DATABASE_URL!, {
+  arrayMode: false,
+  fullResults: false,
+});
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Seeding database...");
