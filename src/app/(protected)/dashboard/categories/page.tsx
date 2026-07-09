@@ -31,7 +31,7 @@ export default async function CategoriesPage({ searchParams }: Props) {
 
       <Suspense fallback={<div>Loading...</div>}>
         <CategoriesTable
-          data={result.data.map((cat) => ({
+          data={result.data.map((cat: any) => ({
             ...cat,
             parentName: cat.parent?.name ?? null,
             productCount: cat._count?.products ?? 0,
