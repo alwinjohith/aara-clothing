@@ -43,6 +43,7 @@ export interface Product {
   id: string;
   name: string;
   description: string | null;
+  price: number;
   categoryId: string;
   category?: { id: string; name: string };
   isActive: boolean;
@@ -83,14 +84,19 @@ export interface Customer {
 
 export interface Order {
   id: string;
+  orderNumber: string;
   customerId: string;
   status: OrderStatus;
   subtotal: number;
   discount: number;
   total: number;
+  notes: string | null;
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
+  customer?: Customer;
+  items?: OrderItem[];
+  user?: { id: string; username: string };
 }
 
 export interface OrderItem {
@@ -100,6 +106,7 @@ export interface OrderItem {
   quantity: number;
   price: number;
   subtotal: number;
+  variant?: ProductVariant & { product?: { id: string; name: string; price: number } };
 }
 
-export type OrderStatus = "PENDING" | "PROCESSING" | "DELIVERED" | "CANCELLED";
+export type OrderStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED";

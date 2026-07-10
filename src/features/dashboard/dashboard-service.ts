@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { STOCK_THRESHOLDS } from "@/lib/constants";
+import { STOCK_THRESHOLDS, ORDER_STATUSES } from "@/lib/constants";
 
 export async function getDashboardStats() {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
   const [
     totalProducts,
     totalVariants,
@@ -9,6 +12,11 @@ export async function getDashboardStats() {
     stockAggregation,
     lowStockProducts,
     outOfStockProducts,
+    todayOrders,
+    pendingOrders,
+    processingOrders,
+    completedOrders,
+    cancelledOrders,
   ] = await Promise.all([
     prisma.product.count({ where: { deletedAt: null } }),
     prisma.productVariant.count({
@@ -31,6 +39,21 @@ export async function getDashboardStats() {
         stock: { equals: STOCK_THRESHOLDS.OUT },
       },
     }),
+    prisma.order.count({
+      where: { createdAt: { gte: todayStart } },
+    }),
+    prisma.order.count({
+      where: { status: ORDER_STATUSES.PENDING },
+    }),
+    prisma.order.count({
+      where: { status: ORDER_STATUSES.PROCESSING },
+    }),
+    prisma.order.count({
+      where: { status: ORDER_STATUSES.COMPLETED },
+    }),
+    prisma.order.count({
+      where: { status: ORDER_STATUSES.CANCELLED },
+    }),
   ]);
 
   return {
@@ -40,5 +63,10 @@ export async function getDashboardStats() {
     totalStockUnits: stockAggregation._sum.stock ?? 0,
     lowStockProducts,
     outOfStockProducts,
+    todayOrders,
+    pendingOrders,
+    processingOrders,
+    completedOrders,
+    cancelledOrders,
   };
 }

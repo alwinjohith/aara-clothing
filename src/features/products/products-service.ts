@@ -1,6 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import type { ProductQuery, CreateProductInput, UpdateProductInput } from "./products-validation";
 
+function serialize(data: unknown) {
+  return JSON.parse(JSON.stringify(data));
+}
+
 export async function listProducts(query: ProductQuery) {
   const { page, limit, search } = query;
   const skip = (page - 1) * limit;
@@ -27,17 +31,17 @@ export async function listProducts(query: ProductQuery) {
     prisma.product.count({ where }),
   ]);
 
-  return {
+  return serialize({
     data,
     total,
     page,
     limit,
     totalPages: Math.ceil(total / limit),
-  };
+  });
 }
 
 export async function getProductById(id: string) {
-  return prisma.product.findFirst({
+  const product = await prisma.product.findFirst({
     where: { id, deletedAt: null },
     include: {
       category: {
@@ -53,6 +57,8 @@ export async function getProductById(id: string) {
       },
     },
   });
+
+  return product ? serialize(product) : null;
 }
 
 export async function createProduct(input: CreateProductInput) {
@@ -61,17 +67,18 @@ export async function createProduct(input: CreateProductInput) {
   });
   if (!category) throw new Error("Category not found");
 
-  return prisma.product.create({
+  return serialize(await prisma.product.create({
     data: {
       name: input.name,
       description: input.description ?? null,
+      price: input.price ?? 0,
       categoryId: input.categoryId,
       isActive: input.isActive ?? true,
     },
     include: {
       category: { select: { id: true, name: true } },
     },
-  });
+  }));
 }
 
 export async function updateProduct(id: string, input: UpdateProductInput) {
@@ -90,16 +97,17 @@ export async function updateProduct(id: string, input: UpdateProductInput) {
   const data: Record<string, unknown> = {};
   if (input.name !== undefined) data.name = input.name;
   if (input.description !== undefined) data.description = input.description;
+  if (input.price !== undefined) data.price = input.price;
   if (input.categoryId !== undefined) data.categoryId = input.categoryId;
   if (input.isActive !== undefined) data.isActive = input.isActive;
 
-  return prisma.product.update({
+  return serialize(await prisma.product.update({
     where: { id },
     data,
     include: {
       category: { select: { id: true, name: true } },
     },
-  });
+  }));
 }
 
 export async function deleteProduct(id: string) {

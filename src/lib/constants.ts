@@ -15,7 +15,7 @@ export const APP_DESCRIPTION = "Internal Inventory & Order Management System";
 export const ORDER_STATUSES = {
   PENDING: "PENDING",
   PROCESSING: "PROCESSING",
-  DELIVERED: "DELIVERED",
+  COMPLETED: "COMPLETED",
   CANCELLED: "CANCELLED",
 } as const;
 
@@ -24,15 +24,32 @@ export type OrderStatus = (typeof ORDER_STATUSES)[keyof typeof ORDER_STATUSES];
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   PENDING: "Pending",
   PROCESSING: "Processing",
-  DELIVERED: "Delivered",
+  COMPLETED: "Completed",
   CANCELLED: "Cancelled",
 };
 
 export const ORDER_STATUS_FLOW: Record<OrderStatus, OrderStatus[]> = {
   PENDING: ["PROCESSING", "CANCELLED"],
-  PROCESSING: ["DELIVERED", "CANCELLED"],
-  DELIVERED: [],
+  PROCESSING: ["COMPLETED", "CANCELLED"],
+  COMPLETED: [],
   CANCELLED: [],
+};
+
+export function getValidOrderStatusTransitions(
+  current: OrderStatus
+): OrderStatus[] {
+  return ORDER_STATUS_FLOW[current] ?? [];
+}
+
+export function canEditOrder(status: OrderStatus): boolean {
+  return status === ORDER_STATUSES.PENDING || status === ORDER_STATUSES.PROCESSING;
+}
+
+export const ORDER_STATUS_VARIANTS: Record<OrderStatus, "default" | "secondary" | "success" | "destructive" | "warning" | "outline"> = {
+  PENDING: "warning",
+  PROCESSING: "default",
+  COMPLETED: "success",
+  CANCELLED: "destructive",
 };
 
 export const STOCK_THRESHOLDS = {

@@ -5,6 +5,10 @@ import type {
   UpdateCustomerInput,
 } from "./customers-validation";
 
+function serialize(data: unknown) {
+  return JSON.parse(JSON.stringify(data));
+}
+
 export async function listCustomers(query: CustomerQuery) {
   const { page, limit, search } = query;
   const skip = (page - 1) * limit;
@@ -28,17 +32,17 @@ export async function listCustomers(query: CustomerQuery) {
     prisma.customer.count({ where }),
   ]);
 
-  return {
+  return serialize({
     data,
     total,
     page,
     limit,
     totalPages: Math.ceil(total / limit),
-  };
+  });
 }
 
 export async function getCustomerById(id: string) {
-  return prisma.customer.findUnique({
+  const customer = await prisma.customer.findUnique({
     where: { id },
     include: {
       orders: {
@@ -46,6 +50,37 @@ export async function getCustomerById(id: string) {
         take: 10,
       },
     },
+  });
+
+  return customer ? serialize(customer) : null;
+}
+
+export async function getCustomerDetail(id: string) {
+  const [customer, orderAggregation] = await Promise.all([
+    prisma.customer.findUnique({
+      where: { id },
+      include: {
+        orders: {
+          orderBy: { createdAt: "desc" },
+          take: 50,
+        },
+      },
+    }),
+    prisma.order.aggregate({
+      where: { customerId: id },
+      _count: { id: true },
+      _sum: { total: true },
+      _max: { createdAt: true },
+    }),
+  ]);
+
+  if (!customer) return null;
+
+  return serialize({
+    ...customer,
+    totalOrders: orderAggregation._count.id,
+    totalSpent: Number(orderAggregation._sum.total ?? 0),
+    lastOrderDate: orderAggregation._max.createdAt,
   });
 }
 

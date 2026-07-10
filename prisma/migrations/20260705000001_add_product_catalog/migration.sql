@@ -1,5 +1,5 @@
 -- AlterTable
-ALTER TABLE "Category" ADD COLUMN "slug" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "Category" ADD COLUMN "slug" TEXT NOT NULL;
 ALTER TABLE "Category" ADD COLUMN "deletedAt" TIMESTAMP(3);
 
 -- AlterTable

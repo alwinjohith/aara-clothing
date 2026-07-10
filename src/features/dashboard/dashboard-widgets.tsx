@@ -8,6 +8,11 @@ import {
   ShoppingCart,
   AlertTriangle,
   XCircle,
+  ClipboardList,
+  Clock,
+  RefreshCw,
+  CheckCircle2,
+  Ban,
 } from "lucide-react";
 
 interface Stats {
@@ -17,6 +22,11 @@ interface Stats {
   totalStockUnits: number;
   lowStockProducts: number;
   outOfStockProducts: number;
+  todayOrders: number;
+  pendingOrders: number;
+  processingOrders: number;
+  completedOrders: number;
+  cancelledOrders: number;
 }
 
 interface Props {
@@ -25,6 +35,36 @@ interface Props {
 
 export function DashboardWidgets({ stats }: Props) {
   const cards = [
+    {
+      title: "Today's Orders",
+      value: stats.todayOrders,
+      icon: ClipboardList,
+      className: stats.todayOrders > 0 ? "text-blue-600" : undefined,
+    },
+    {
+      title: "Pending Orders",
+      value: stats.pendingOrders,
+      icon: Clock,
+      className: stats.pendingOrders > 0 ? "text-amber-600" : undefined,
+    },
+    {
+      title: "Processing Orders",
+      value: stats.processingOrders,
+      icon: RefreshCw,
+      className: stats.processingOrders > 0 ? "text-blue-600" : undefined,
+    },
+    {
+      title: "Completed Orders",
+      value: stats.completedOrders,
+      icon: CheckCircle2,
+      className: stats.completedOrders > 0 ? "text-emerald-600" : undefined,
+    },
+    {
+      title: "Cancelled Orders",
+      value: stats.cancelledOrders,
+      icon: Ban,
+      className: stats.cancelledOrders > 0 ? "text-destructive" : undefined,
+    },
     {
       title: "Total Products",
       value: stats.totalProducts,
@@ -60,7 +100,7 @@ export function DashboardWidgets({ stats }: Props) {
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {cards.map((card) => (
         <Card key={card.title}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">

@@ -51,6 +51,12 @@ export default async function ProtectedLayout({
               Inventory
             </Link>
             <Link
+              href={ROUTES.ORDERS}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Orders
+            </Link>
+            <Link
               href={ROUTES.CUSTOMERS}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
