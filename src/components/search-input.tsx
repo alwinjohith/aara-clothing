@@ -17,7 +17,7 @@ export function SearchInput({
   value,
   onChange,
   placeholder = "Search...",
-  debounceMs = 300,
+  debounceMs = 500,
   className,
 }: SearchInputProps) {
   const [local, setLocal] = useState(value);

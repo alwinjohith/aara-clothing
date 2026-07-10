@@ -28,36 +28,42 @@ export default async function ProtectedLayout({
           <nav className="flex items-center gap-6">
             <Link
               href={ROUTES.DASHBOARD}
+              prefetch={true}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               Dashboard
             </Link>
             <Link
               href={ROUTES.PRODUCTS}
+              prefetch={true}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               Products
             </Link>
             <Link
               href={ROUTES.CATEGORIES}
+              prefetch={true}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               Categories
             </Link>
             <Link
               href={ROUTES.INVENTORY}
+              prefetch={true}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               Inventory
             </Link>
             <Link
               href={ROUTES.ORDERS}
+              prefetch={true}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               Orders
             </Link>
             <Link
               href={ROUTES.CUSTOMERS}
+              prefetch={true}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               Customers

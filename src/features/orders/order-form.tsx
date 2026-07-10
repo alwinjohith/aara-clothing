@@ -110,12 +110,12 @@ export function OrderForm({ mode, initialData }: OrderFormProps) {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => searchCustomers(customerSearch), 300);
+    const timer = setTimeout(() => searchCustomers(customerSearch), 500);
     return () => clearTimeout(timer);
   }, [customerSearch, searchCustomers]);
 
   useEffect(() => {
-    const timer = setTimeout(() => searchProducts(productSearch), 300);
+    const timer = setTimeout(() => searchProducts(productSearch), 500);
     return () => clearTimeout(timer);
   }, [productSearch, searchProducts]);
 

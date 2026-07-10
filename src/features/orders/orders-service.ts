@@ -51,23 +51,8 @@ export async function listOrders(query: OrderQuery) {
         customer: {
           select: { id: true, name: true, phone: true },
         },
-        items: {
-          include: {
-            variant: {
-              select: {
-                id: true,
-                color: true,
-                size: true,
-                sku: true,
-                product: {
-                  select: { id: true, name: true },
-                },
-              },
-            },
-          },
-        },
-        user: {
-          select: { id: true, username: true },
+        _count: {
+          select: { items: true },
         },
       },
       orderBy: { createdAt: "desc" },

@@ -19,7 +19,7 @@ interface OrderRow {
   orderNumber: string;
   customer: { id: string; name: string; phone: string };
   status: string;
-  items: Array<{ id: string }>;
+  _count: { items: number };
   total: number;
   createdAt: Date;
 }
@@ -89,7 +89,7 @@ export function OrdersTable({ data, page, totalPages, search, statusFilter }: Pr
       key: "items",
       header: "Items",
       className: "text-center",
-      cell: (item) => <span>{item.items.length}</span>,
+      cell: (item) => <span>{item._count.items}</span>,
     },
     {
       key: "total",

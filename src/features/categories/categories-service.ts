@@ -39,7 +39,7 @@ export async function listCategories(query: CategoryQuery) {
       take: limit,
       include: {
         parent: { select: { id: true, name: true } },
-        _count: { select: { children: true, products: true } },
+        _count: { select: { products: true } },
       },
       orderBy: { name: "asc" },
     }),
