@@ -21,9 +21,16 @@ export default async function ProtectedLayout({
         <div className="flex h-14 items-center justify-between px-6">
           <Link
             href={ROUTES.DASHBOARD}
-            className="text-lg font-semibold tracking-tight"
+            className="flex items-center gap-2"
           >
-            Aara Clothing
+            <img
+              src="/aara-logo.jpg"
+              alt="Aara Clothing"
+              className="h-8 w-auto"
+            />
+            <span className="text-lg font-semibold tracking-tight">
+              Aara Clothing
+            </span>
           </Link>
           <nav className="flex items-center gap-6">
             <Link
