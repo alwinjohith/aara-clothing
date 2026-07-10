@@ -55,7 +55,7 @@ export function VariantForm({ productId, onVariantCreated }: VariantFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 rounded-lg border p-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="color">Color</Label>
           <Input id="color" placeholder="e.g. Black" {...register("color")} />

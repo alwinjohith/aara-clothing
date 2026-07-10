@@ -13,7 +13,7 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-between px-4 py-3">
+    <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
       <p className="text-sm text-muted-foreground">
         Page {page} of {totalPages}
       </p>
@@ -25,7 +25,7 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
           onClick={() => onPageChange(page - 1)}
         >
           <ChevronLeft className="size-4" />
-          Previous
+          <span className="hidden sm:inline">Previous</span>
         </Button>
         <Button
           variant="outline"
@@ -33,7 +33,7 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
         >
-          Next
+          <span className="hidden sm:inline">Next</span>
           <ChevronRight className="size-4" />
         </Button>
       </div>

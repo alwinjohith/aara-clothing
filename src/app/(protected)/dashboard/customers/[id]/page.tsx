@@ -28,12 +28,12 @@ export default async function CustomerProfilePage({ params }: Props) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold tracking-tight">{customer.name}</h2>
           <p className="text-sm text-muted-foreground">Customer Profile</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Link href={`/dashboard/customers/${id}/edit`}>
             <Button variant="outline" size="sm">
               <Pencil className="size-4" />
@@ -125,7 +125,7 @@ export default async function CustomerProfilePage({ params }: Props) {
 
       {/* Section 3 — Order History */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
           <CardTitle>Order History</CardTitle>
           <Link href={`/dashboard/customers/${id}/orders/new`}>
             <Button size="sm">

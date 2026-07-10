@@ -17,7 +17,7 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen overflow-x-hidden bg-background">
       {/* Mobile Sidebar (hamburger) */}
       <MobileSidebar />
 
@@ -26,13 +26,13 @@ export default async function ProtectedLayout({
 
       {/* Main Content Area */}
       <div className="lg:pl-64">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 pb-6 pt-16 sm:px-6 lg:px-8 lg:pb-6 lg:pt-6">
           {/* Header with Greeting + Actions */}
           <Header />
 
           {/* Page Content */}
           <main>
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+            <div className="overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
               {children}
             </div>
           </main>

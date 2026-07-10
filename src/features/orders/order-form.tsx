@@ -232,6 +232,7 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
                       min={1}
                       value={quantity}
                       onChange={(e) => setQuantity(Number(e.target.value))}
+                      className="min-w-0 flex-1"
                     />
                     <Button
                       type="button"
@@ -248,7 +249,7 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
             {items.length > 0 && (
               <div className="mt-6 space-y-2">
                 <Label>Order Items</Label>
-                <div className="rounded-md border">
+                <div className="overflow-x-auto rounded-md border">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b text-left">
@@ -283,7 +284,7 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
               </div>
             )}
 
-            <div className="flex gap-3 pt-4">
+            <div className="flex flex-wrap gap-3 pt-4">
               <Button
                 type="button"
                 variant="outline"

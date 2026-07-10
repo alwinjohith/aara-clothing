@@ -116,7 +116,7 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
               <Label htmlFor="isActive">Active</Label>
             </div>
 
-            <div className="flex gap-3 pt-2">
+            <div className="flex flex-wrap gap-3 pt-2">
               <Button type="button" variant="outline" onClick={() => router.back()}>
                 Cancel
               </Button>
@@ -147,7 +147,7 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
                       key={variant.id}
                       className="rounded-lg border p-4"
                     >
-                      <div className="mb-3 grid grid-cols-4 gap-3 text-sm">
+                      <div className="mb-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
                         <div>
                           <span className="text-muted-foreground">Color:</span>{" "}
                           {variant.color}

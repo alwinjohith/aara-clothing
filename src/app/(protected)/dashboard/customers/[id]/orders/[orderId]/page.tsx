@@ -34,11 +34,11 @@ export default async function OrderDetailPage({ params }: Props) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-4">
           <Link
             href={`/dashboard/customers/${customerId}`}
-            className="flex size-9 items-center justify-center rounded-xl border border-border transition-colors duration-200 hover:bg-muted"
+            className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border transition-colors duration-200 hover:bg-muted"
           >
             <ArrowLeft className="size-5" />
           </Link>
@@ -51,7 +51,7 @@ export default async function OrderDetailPage({ params }: Props) {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Badge variant={statusVariant[order.status] ?? "secondary"} className="text-sm px-3 py-1">
             {ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS] ?? order.status}
           </Badge>

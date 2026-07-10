@@ -99,7 +99,7 @@ export function ProductTable({ data, page, totalPages, search }: Props) {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       <SearchInput
         value={search}
         onChange={(val) => {

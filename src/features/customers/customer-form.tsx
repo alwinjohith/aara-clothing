@@ -104,7 +104,7 @@ export function CustomerForm({ mode, initialData }: CustomerFormProps) {
             )}
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-wrap gap-3 pt-2">
             <Button
               type="button"
               variant="outline"

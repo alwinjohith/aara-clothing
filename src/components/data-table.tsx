@@ -28,7 +28,7 @@ export function DataTable<T>({
   actions,
 }: DataTableProps<T>) {
   return (
-    <Card className="border-border">
+    <Card className="w-full min-w-0 border-border">
       {(title || actions) && (
         <CardHeader className="flex flex-row items-center justify-between">
           {title && <CardTitle>{title}</CardTitle>}

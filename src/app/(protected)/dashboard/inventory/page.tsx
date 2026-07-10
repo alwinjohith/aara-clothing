@@ -39,14 +39,14 @@ export default async function InventoryPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold tracking-tight">Inventory</h2>
           <p className="text-sm text-muted-foreground">
             Manage your products and stock levels
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Link href="/dashboard/inventory/stock">
             <Button variant="outline">Manage Stock</Button>
           </Link>
