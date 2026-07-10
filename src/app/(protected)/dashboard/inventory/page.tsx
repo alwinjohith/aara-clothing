@@ -1,33 +1,62 @@
 import { Suspense } from "react";
-import { listInventory } from "@/features/inventory/inventory-service";
-import { inventoryQuerySchema } from "@/features/inventory/inventory-validation";
-import { InventoryTable } from "@/features/inventory/inventory-table";
+import Link from "next/link";
+import { listProducts } from "@/features/inventory/inventory-service";
+import { productQuerySchema } from "@/features/inventory/inventory-validation";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { ProductTable } from "@/features/inventory/product-table";
+import type { Product } from "@/types";
 
-export default async function InventoryPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const params = await searchParams;
-  const query = inventoryQuerySchema.parse({
-    page: params.page ?? 1,
-    limit: params.limit ?? 20,
-    search: params.search ?? "",
+interface ProductRow {
+  id: string;
+  name: string;
+  variantCount: number;
+  isActive: boolean;
+  createdAt: Date;
+}
+
+interface Props {
+  searchParams: Promise<{ page?: string; search?: string }>;
+}
+
+export default async function InventoryPage({ searchParams }: Props) {
+  const { page, search } = await searchParams;
+  const query = productQuerySchema.parse({
+    page: page ? Number(page) : 1,
+    limit: 20,
+    search,
   });
 
-  const result = await listInventory(query);
+  const result = await listProducts(query);
+
+  const rows: ProductRow[] = result.data.map((p) => ({
+    id: p.id,
+    name: p.name,
+    variantCount: (p as Product & { _count?: { variants: number } })._count?.variants ?? 0,
+    isActive: p.isActive,
+    createdAt: p.createdAt,
+  }));
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
+    <div className="space-y-6 p-6">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Inventory</h1>
-        <p className="text-muted-foreground">
-          Manage stock levels for all product variants
-        </p>
+        <div className="flex gap-2">
+          <Link href="/dashboard/inventory/stock">
+            <Button variant="outline">Manage Stock</Button>
+          </Link>
+          <Link href="/dashboard/inventory/new">
+            <Button>
+              <Plus className="size-4" />
+              New Product
+            </Button>
+          </Link>
+        </div>
       </div>
+
       <Suspense fallback={<div>Loading...</div>}>
-        <InventoryTable
-          data={result.data}
+        <ProductTable
+          data={rows}
           page={result.page}
           totalPages={result.totalPages}
           search={query.search ?? ""}

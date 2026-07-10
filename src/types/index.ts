@@ -26,25 +26,10 @@ export interface User {
   updatedAt: Date;
 }
 
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  parentId: string | null;
-  parent?: { id: string; name: string } | null;
-  children?: { id: string; name: string }[];
-  _count?: { children: number; products: number };
-  deletedAt: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 export interface Product {
   id: string;
   name: string;
   description: string | null;
-  categoryId: string;
-  category?: { id: string; name: string };
   isActive: boolean;
   deletedAt: Date | null;
   createdAt: Date;

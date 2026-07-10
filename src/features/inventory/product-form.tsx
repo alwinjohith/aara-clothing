@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { createProductSchema, updateProductSchema, type CreateProductInput, type UpdateProductInput } from "./products-validation";
+import { createProductSchema, updateProductSchema, type CreateProductInput, type UpdateProductInput } from "./inventory-validation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,11 +15,10 @@ import type { Product, ProductVariant } from "@/types";
 
 interface ProductFormProps {
   mode: "create" | "edit";
-  categories: { id: string; name: string }[];
   initialData?: Product;
 }
 
-export function ProductForm({ mode, categories, initialData }: ProductFormProps) {
+export function ProductForm({ mode, initialData }: ProductFormProps) {
   const router = useRouter();
   const isEdit = mode === "edit";
 
@@ -35,14 +34,13 @@ export function ProductForm({ mode, categories, initialData }: ProductFormProps)
     defaultValues: {
       name: initialData?.name ?? "",
       description: initialData?.description ?? "",
-      categoryId: initialData?.categoryId ?? "",
       isActive: initialData?.isActive ?? true,
     },
   });
 
   async function onSubmit(data: CreateProductInput | UpdateProductInput) {
     try {
-      const url = isEdit ? `/api/products/${initialData!.id}` : "/api/products";
+      const url = isEdit ? `/api/inventory/${initialData!.id}` : "/api/inventory";
       const method = isEdit ? "PATCH" : "POST";
 
       const response = await fetch(url, {
@@ -57,7 +55,7 @@ export function ProductForm({ mode, categories, initialData }: ProductFormProps)
         throw new Error(result.error ?? "Failed to save product");
       }
 
-      router.push("/dashboard/products");
+      router.push("/dashboard/inventory");
       router.refresh();
     } catch (error) {
       if (error instanceof Error) {
@@ -89,28 +87,6 @@ export function ProductForm({ mode, categories, initialData }: ProductFormProps)
               <Textarea id="description" rows={3} {...register("description")} />
               {errors.description && (
                 <p className="text-sm text-destructive">{errors.description.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="categoryId">Category</Label>
-              <select
-                id="categoryId"
-                value={initialData?.categoryId ?? ""}
-                onChange={(e) => setValue("categoryId", e.target.value)}
-                className="flex h-9 w-full appearance-none rounded-md border border-input bg-transparent px-3 py-1 pr-8 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value="" disabled>
-                  Select a category
-                </option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-              {errors.categoryId && (
-                <p className="text-sm text-destructive">{errors.categoryId.message}</p>
               )}
             </div>
 

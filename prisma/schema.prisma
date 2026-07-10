@@ -16,25 +16,10 @@ model User {
   orders Order[]
 }
 
-model Category {
-  id        String     @id @default(uuid())
-  name      String
-  slug      String     @unique
-  parentId  String?
-  parent    Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children  Category[] @relation("CategoryHierarchy")
-  products  Product[]
-  deletedAt DateTime?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-}
-
 model Product {
   id          String           @id @default(uuid())
   name        String
   description String?
-  categoryId  String
-  category    Category         @relation(fields: [categoryId], references: [id])
   isActive    Boolean          @default(true)
   deletedAt   DateTime?
   createdAt   DateTime         @default(now())

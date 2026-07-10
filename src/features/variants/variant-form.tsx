@@ -32,7 +32,7 @@ export function VariantForm({ productId, onVariantCreated }: VariantFormProps) {
 
   async function onSubmit(data: CreateVariantInput) {
     try {
-      const response = await fetch(`/api/products/${productId}/variants`, {
+      const response = await fetch(`/api/inventory/${productId}/variants`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

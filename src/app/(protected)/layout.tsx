@@ -41,18 +41,6 @@ export default async function ProtectedLayout({
               Dashboard
             </Link>
             <Link
-              href={ROUTES.PRODUCTS}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Products
-            </Link>
-            <Link
-              href={ROUTES.CATEGORIES}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Categories
-            </Link>
-            <Link
               href={ROUTES.INVENTORY}
               className="text-sm text-muted-foreground hover:text-foreground"
             >
@@ -63,6 +51,12 @@ export default async function ProtectedLayout({
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               Customers
+            </Link>
+            <Link
+              href={ROUTES.SETTINGS}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Settings
             </Link>
             <SignOutButton />
           </nav>

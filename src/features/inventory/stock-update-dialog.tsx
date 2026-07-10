@@ -65,7 +65,7 @@ export function StockUpdateDialog({
         body = { stock: data.stock };
       }
 
-      const response = await fetch(`/api/inventory/${variant.id}`, {
+      const response = await fetch(`/api/inventory/stock/${variant.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
