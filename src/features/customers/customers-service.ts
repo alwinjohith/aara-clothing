@@ -23,13 +23,31 @@ export async function listCustomers(query: CustomerQuery) {
       where,
       skip,
       take: limit,
+      include: {
+        _count: { select: { orders: true } },
+      },
       orderBy: { createdAt: "desc" },
     }),
     prisma.customer.count({ where }),
   ]);
 
+  const enriched = await Promise.all(
+    data.map(async (customer) => {
+      const lastOrder = await prisma.order.findFirst({
+        where: { customerId: customer.id },
+        orderBy: { createdAt: "desc" },
+        select: { createdAt: true },
+      });
+      return {
+        ...customer,
+        orderCount: customer._count.orders,
+        lastOrderDate: lastOrder?.createdAt ?? null,
+      };
+    })
+  );
+
   return {
-    data,
+    data: enriched,
     total,
     page,
     limit,
@@ -43,13 +61,18 @@ export async function getCustomerById(id: string) {
     include: {
       orders: {
         orderBy: { createdAt: "desc" },
-        take: 10,
+        take: 100,
       },
     },
   });
 }
 
 export async function createCustomer(input: CreateCustomerInput) {
+  const existingPhone = await prisma.customer.findUnique({
+    where: { phone: input.phone },
+  });
+  if (existingPhone) throw new Error("A customer with this phone number already exists");
+
   return prisma.customer.create({
     data: {
       name: input.name,
@@ -62,6 +85,13 @@ export async function createCustomer(input: CreateCustomerInput) {
 export async function updateCustomer(id: string, input: UpdateCustomerInput) {
   const existing = await prisma.customer.findUnique({ where: { id } });
   if (!existing) return null;
+
+  if (input.phone && input.phone !== existing.phone) {
+    const duplicatePhone = await prisma.customer.findUnique({
+      where: { phone: input.phone },
+    });
+    if (duplicatePhone) throw new Error("A customer with this phone number already exists");
+  }
 
   const data: Record<string, unknown> = {};
   if (input.name !== undefined) data.name = input.name;

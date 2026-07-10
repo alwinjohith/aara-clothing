@@ -6,6 +6,7 @@ export const createProductSchema = z.object({
     .min(1, "Name is required")
     .max(200, "Name must be 200 characters or less"),
   description: z.string().max(1000).optional().nullable(),
+  price: z.number().min(0, "Price cannot be negative").default(0),
   isActive: z.boolean().default(true),
 });
 

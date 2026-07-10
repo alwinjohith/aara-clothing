@@ -30,8 +30,13 @@ export async function listProducts(query: ProductQuery) {
     prisma.product.count({ where }),
   ]);
 
+  const enriched = data.map((p) => ({
+    ...p,
+    price: Number(p.price),
+  }));
+
   return {
-    data,
+    data: enriched,
     total,
     page,
     limit,
@@ -40,7 +45,7 @@ export async function listProducts(query: ProductQuery) {
 }
 
 export async function getProductById(id: string) {
-  return prisma.product.findFirst({
+  const product = await prisma.product.findFirst({
     where: { id, deletedAt: null },
     include: {
       variants: {
@@ -53,6 +58,13 @@ export async function getProductById(id: string) {
       },
     },
   });
+
+  if (!product) return null;
+
+  return {
+    ...product,
+    price: Number(product.price),
+  };
 }
 
 export async function createProduct(input: CreateProductInput) {
@@ -60,6 +72,7 @@ export async function createProduct(input: CreateProductInput) {
     data: {
       name: input.name,
       description: input.description ?? null,
+      price: input.price ?? 0,
       isActive: input.isActive ?? true,
     },
   });
@@ -74,6 +87,7 @@ export async function updateProduct(id: string, input: UpdateProductInput) {
   const data: Record<string, unknown> = {};
   if (input.name !== undefined) data.name = input.name;
   if (input.description !== undefined) data.description = input.description;
+  if (input.price !== undefined) data.price = input.price;
   if (input.isActive !== undefined) data.isActive = input.isActive;
 
   return prisma.product.update({

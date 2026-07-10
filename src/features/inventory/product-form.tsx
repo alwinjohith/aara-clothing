@@ -34,6 +34,7 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
     defaultValues: {
       name: initialData?.name ?? "",
       description: initialData?.description ?? "",
+      price: initialData?.price ?? 0,
       isActive: initialData?.isActive ?? true,
     },
   });
@@ -87,6 +88,20 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
               <Textarea id="description" rows={3} {...register("description")} />
               {errors.description && (
                 <p className="text-sm text-destructive">{errors.description.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="price">Price</Label>
+              <Input
+                id="price"
+                type="number"
+                step="0.01"
+                min="0"
+                {...register("price", { valueAsNumber: true })}
+              />
+              {errors.price && (
+                <p className="text-sm text-destructive">{errors.price.message}</p>
               )}
             </div>
 

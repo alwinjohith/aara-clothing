@@ -20,6 +20,7 @@ model Product {
   id          String           @id @default(uuid())
   name        String
   description String?
+  price       Decimal          @default(0) @db.Decimal(10, 2)
   isActive    Boolean          @default(true)
   deletedAt   DateTime?
   createdAt   DateTime         @default(now())
@@ -52,7 +53,7 @@ model VariantImage {
 model Customer {
   id        String   @id @default(uuid())
   name      String
-  phone     String
+  phone     String   @unique
   address   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -62,6 +63,7 @@ model Customer {
 
 model Order {
   id         String      @id @default(uuid())
+  orderNumber Int        @default(autoincrement())
   customerId String
   customer   Customer    @relation(fields: [customerId], references: [id])
   status     OrderStatus @default(PENDING)

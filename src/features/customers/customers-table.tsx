@@ -16,6 +16,8 @@ interface CustomerRow {
   phone: string;
   address: string | null;
   createdAt: Date;
+  orderCount: number;
+  lastOrderDate: Date | null;
 }
 
 interface Props {
@@ -69,6 +71,24 @@ export function CustomersTable({ data, page, totalPages, search }: Props) {
       cell: (item) => (
         <span className="text-muted-foreground">
           {item.address ?? "-"}
+        </span>
+      ),
+    },
+    {
+      key: "orderCount",
+      header: "Orders",
+      cell: (item) => (
+        <span className="font-medium">{item.orderCount}</span>
+      ),
+    },
+    {
+      key: "lastOrderDate",
+      header: "Last Order",
+      cell: (item) => (
+        <span className="text-muted-foreground">
+          {item.lastOrderDate
+            ? new Date(item.lastOrderDate).toLocaleDateString()
+            : "-"}
         </span>
       ),
     },

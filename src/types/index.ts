@@ -30,6 +30,7 @@ export interface Product {
   id: string;
   name: string;
   description: string | null;
+  price: number;
   isActive: boolean;
   deletedAt: Date | null;
   createdAt: Date;
@@ -68,6 +69,7 @@ export interface Customer {
 
 export interface Order {
   id: string;
+  orderNumber: number;
   customerId: string;
   status: OrderStatus;
   subtotal: number;
