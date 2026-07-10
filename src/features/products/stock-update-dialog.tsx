@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateStockSchema, type UpdateStockInput } from "./inventory-validation";
+import { updateStockSchema, type UpdateStockInput } from "@/features/products/products-validation";
 import {
   Dialog,
   DialogContent,

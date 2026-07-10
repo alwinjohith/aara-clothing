@@ -22,3 +22,17 @@ export const productQuerySchema = z.object({
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 export type ProductQuery = z.infer<typeof productQuerySchema>;
+
+export const updateStockSchema = z.object({
+  stock: z.number().int().min(0, "Stock cannot be negative"),
+});
+
+export const adjustStockSchema = z.object({
+  amount: z
+    .number()
+    .int()
+    .refine((val) => val !== 0, "Amount cannot be zero"),
+});
+
+export type UpdateStockInput = z.infer<typeof updateStockSchema>;
+export type AdjustStockInput = z.infer<typeof adjustStockSchema>;

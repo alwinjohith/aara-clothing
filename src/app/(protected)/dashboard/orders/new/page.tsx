@@ -1,6 +1,12 @@
 import { OrderForm } from "@/features/orders/order-form";
 
-export default function CreateOrderPage() {
+interface Props {
+  searchParams: Promise<{ customerId?: string }>;
+}
+
+export default async function CreateOrderPage({ searchParams }: Props) {
+  const { customerId } = await searchParams;
+
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -9,7 +15,7 @@ export default function CreateOrderPage() {
           Create a new customer order
         </p>
       </div>
-      <OrderForm mode="create" />
+      <OrderForm mode="create" customerId={customerId ?? undefined} />
     </div>
   );
 }

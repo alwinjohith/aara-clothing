@@ -31,11 +31,7 @@ export default async function ProductsPage({ searchParams }: Props) {
 
       <Suspense fallback={<div>Loading...</div>}>
         <ProductsTable
-          data={result.data.map((p: any) => ({
-            ...p,
-            categoryName: p.category?.name ?? "-",
-            variantCount: p._count?.variants ?? 0,
-          }))}
+          data={result.data}
           page={result.page}
           totalPages={result.totalPages}
           search={search ?? ""}

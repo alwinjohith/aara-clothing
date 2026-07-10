@@ -46,23 +46,6 @@ export const updateOrderStatusSchema = z.object({
   ]),
 });
 
-export const orderQuerySchema = z.object({
-  page: z.coerce.number().int().positive().default(1),
-  limit: z.coerce.number().int().positive().max(100).default(20),
-  search: z.string().optional(),
-  status: z
-    .enum([
-      ORDER_STATUSES.PENDING,
-      ORDER_STATUSES.PROCESSING,
-      ORDER_STATUSES.COMPLETED,
-      ORDER_STATUSES.CANCELLED,
-    ])
-    .optional(),
-  dateFrom: z.string().optional(),
-  dateTo: z.string().optional(),
-});
-
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
 export type UpdateOrderInput = z.infer<typeof updateOrderSchema>;
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>;
-export type OrderQuery = z.infer<typeof orderQuerySchema>;

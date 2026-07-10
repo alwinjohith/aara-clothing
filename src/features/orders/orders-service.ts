@@ -4,7 +4,6 @@ import type {
   CreateOrderInput,
   UpdateOrderInput,
   UpdateOrderStatusInput,
-  OrderQuery,
 } from "./orders-validation";
 
 function serialize(data: unknown) {
@@ -13,60 +12,6 @@ function serialize(data: unknown) {
 
 function generateOrderNumber(count: number): string {
   return `ORD-${String(count + 1).padStart(5, "0")}`;
-}
-
-export async function listOrders(query: OrderQuery) {
-  const { page, limit, search, status, dateFrom, dateTo } = query;
-  const skip = (page - 1) * limit;
-
-  const where: Record<string, unknown> = {};
-
-  if (search) {
-    where.OR = [
-      { orderNumber: { contains: search, mode: "insensitive" } },
-      { customer: { name: { contains: search, mode: "insensitive" } } },
-    ];
-  }
-
-  if (status) {
-    where.status = status;
-  }
-
-  if (dateFrom || dateTo) {
-    where.createdAt = {};
-    if (dateFrom) {
-      (where.createdAt as Record<string, unknown>).gte = new Date(dateFrom);
-    }
-    if (dateTo) {
-      (where.createdAt as Record<string, unknown>).lte = new Date(dateTo);
-    }
-  }
-
-  const [data, total] = await Promise.all([
-    prisma.order.findMany({
-      where,
-      skip,
-      take: limit,
-      include: {
-        customer: {
-          select: { id: true, name: true, phone: true },
-        },
-        _count: {
-          select: { items: true },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.order.count({ where }),
-  ]);
-
-  return serialize({
-    data,
-    total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
-  });
 }
 
 export async function getOrderById(id: string) {

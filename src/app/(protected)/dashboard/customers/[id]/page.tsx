@@ -74,7 +74,7 @@ export default async function EditCustomerPage({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Order History</CardTitle>
-          <Link href={`/dashboard/orders/new`}>
+          <Link href={`/dashboard/orders/new?customerId=${customer.id}`}>
             <Button size="sm">
               <Plus className="size-4 mr-1" />
               New Order

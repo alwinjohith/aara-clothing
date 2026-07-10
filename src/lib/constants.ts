@@ -3,10 +3,7 @@ export const ROUTES = {
   LOGIN: "/login",
   DASHBOARD: "/dashboard",
   PRODUCTS: "/dashboard/products",
-  CATEGORIES: "/dashboard/categories",
-  INVENTORY: "/dashboard/inventory",
   CUSTOMERS: "/dashboard/customers",
-  ORDERS: "/dashboard/orders",
 } as const;
 
 export const APP_NAME = "Aara Clothing";

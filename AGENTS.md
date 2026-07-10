@@ -1,252 +1,171 @@
 # AGENTS.md
 
-# Aara Clothing - Internal Inventory & Order Management System
+# Aara Clothing - Internal Business Management System
 
-## Project Overview
+## Overview
 
-This project is an internal Inventory & Order Management System built specifically for **Aara Clothing**.
+This project is an internal business management system built exclusively for **Aara Clothing**.
 
-This is **NOT** an e-commerce platform.
+It is used only by the store owners and administrators to manage daily operations.
 
-There is **no customer-facing interface**.
+This is **not** an e-commerce platform.
 
-The application is only used by store employees to manage inventory and customer orders.
+There are **no customer-facing features**.
 
-The primary goal is to replace spreadsheets/manual tracking with a simple, fast and maintainable web application.
-
----
-
-# Business Information
-
-Store Name:
-- Aara Clothing
-
-Business Type:
-- Clothing Store
-
-Usage:
-- Internal staff only
-
-Average Orders:
-- 10–20 orders/day
-
-Current Product Count:
-- Approximately 40 products
-
-Expected Growth:
-- Small. Large-scale growth is not currently expected.
-
-Hosting:
-- Online
+The objective is to build a stable, fast, and maintainable application that replaces manual order and inventory tracking.
 
 ---
 
-# Project Goals
+# Core Principle
 
-The system should make it easy to:
+Implement **only** what has been explicitly requested.
 
-- Manage products
-- Manage inventory
-- Manage customers
-- Create orders manually
-- Edit orders
-- Track order status
-- Search products and customers quickly
+Never guess business requirements.
 
-The application should prioritize simplicity and reliability over unnecessary features.
+If a requirement is unclear, stop and ask for clarification before writing any code.
+
+Simplicity is always preferred over unnecessary complexity.
+
+Stability is always more important than adding new features.
 
 ---
 
-# Out of Scope
+# Version 1 Scope
 
-The following are intentionally NOT included in the initial version.
+Version 1 consists of only four modules.
 
-- Customer accounts
-- Online shopping
-- Online payments
-- Supplier management
-- Purchase orders
-- Reports
-- Analytics
-- Notifications
-- Audit logs
-- Returns
-- Automatic inventory restoration
-- Offline support
+- Dashboard
+- Products
+- Customers
+- Settings
 
-These may be added later.
+Do not create additional modules unless explicitly requested.
 
 ---
 
-# Users
+# Dashboard
 
-All employees currently have the same permissions.
+The dashboard exists only to provide a quick overview of the business.
 
-There are **no roles** in Version 1.
+Only display information that has been requested.
 
-Every authenticated employee can:
+Do not invent analytics, charts, KPIs, or statistics.
 
-- Manage products
-- Manage inventory
-- Create customers
-- Edit customers
-- Create orders
-- Edit orders
-- Update order status
-
-The authentication system should still be designed so roles can be introduced later without major refactoring.
-
----
-
-# Authentication
-
-Login Method
-
-- Username
-- Password
-
-No email login.
-
-No password reset flow for now.
+Keep the dashboard lightweight and fast.
 
 ---
 
 # Products
 
-The exact product fields will evolve during development.
+The Products module represents the store's inventory.
 
-Initially include only the essential information.
+Each product should contain only the information necessary to manage inventory.
 
-Suggested fields:
+Products may include:
 
 - Name
 - Description
 - Category
+- Images
+- Stock
 - Active Status
 
-Additional fields may be added during development.
-
-Do not over-engineer the schema.
-
----
-
-# Product Variants
-
-Inventory is tracked per variant.
-
-Current variants:
-
-- Color
-- Size
-
-Each variant has:
-
-- Stock
-- Images
-
-Variants DO NOT have different prices.
-
-Variants DO have:
-
-- Different stock
-- Different images
-
-Future variant types should be easy to add.
+Do not add product attributes unless requested.
 
 ---
 
 # Categories
 
-Nested categories are supported.
+Categories exist only to organize products.
 
-Example
+Categories must not have their own page.
 
-Men
-    Shirts
-        Oversized
+Categories must not appear in the sidebar.
 
-Do not assume only one level.
-
----
-
-# Images
-
-Products support multiple images.
-
-Variants also support separate images.
-
-Storage implementation can be decided later.
-
-The codebase should abstract image storage behind a service.
+Categories are managed only when creating or editing a product.
 
 ---
 
 # Inventory
 
-Inventory is tracked per variant.
+Inventory belongs to products.
 
-Employees can:
+Employees should be able to:
 
+- View stock
 - Increase stock
 - Decrease stock
-- Edit stock manually
+- Update stock manually
 
-Inventory history is **not required** in Version 1.
+Do not implement:
 
-Reasons for inventory adjustments are **not required**.
+- Inventory history
+- Adjustment reasons
+- Automatic stock forecasting
 
-Future inventory history should be easy to introduce.
+Unless explicitly requested.
 
 ---
 
 # Customers
 
-Customers should contain:
+Customers are the primary business entity.
 
-- Name
-- Phone Number
-- Address
-- Purchase History
+Every customer may have multiple orders.
 
-The application should allow viewing all previous orders placed by a customer.
+Customer management and order management are combined into a single workflow.
 
-Additional customer information can be introduced later.
+There must **not** be a standalone Orders page.
+
+Customer pages should allow users to:
+
+- View customer information
+- View all previous orders
+- Create new orders
+- Edit existing orders
+- Update order status
+
+Orders are always accessed through a customer.
 
 ---
 
 # Orders
 
-Employees manually create orders.
+Orders are child records of a customer.
 
-Typical workflow:
+Relationship:
 
 Customer
 
-↓
+├── Order
 
-Select products
+├── Order
 
-↓
+└── Order
 
-Select variants
+Business Rules:
 
-↓
+- Every order belongs to exactly one customer.
+- A customer may have multiple orders.
+- An order cannot exist without a customer.
+- Creating an order always begins from a customer.
+- Viewing an order always happens from a customer.
+- Editing an order always happens from a customer.
 
-Choose quantity
-
-↓
-
-Save
-
-Orders can be edited after creation.
-
-Editing should update inventory correctly.
+Do not implement a standalone Orders module.
 
 ---
 
 # Order Status
 
 Supported statuses:
+
+- Pending
+- Processing
+- Delivered
+- Cancelled
+
+Allowed workflow:
 
 Pending
 
@@ -258,35 +177,49 @@ Processing
 
 Delivered
 
-OR
+or
+
+Pending
+
+↓
 
 Cancelled
 
-Statuses must follow the workflow.
+or
 
-Skipping statuses is not allowed.
+Processing
 
-If an invalid transition occurs, the system should revert to **Pending**.
+↓
+
+Cancelled
+
+Do not invent additional statuses.
 
 ---
 
-# Dashboard
+# Authentication
 
-Dashboard should display:
+Authentication consists only of:
 
-- Today's Orders
-- Pending Orders
-- Current Inventory
-- Low Stock Products
-- Out of Stock Products
+- Username
+- Password
 
-Keep the dashboard lightweight.
+Do not implement:
+
+- Email authentication
+- Password reset
+- Social login
+- MFA
+
+Unless explicitly requested.
 
 ---
 
 # Search
 
-Search should support:
+Only implement search where requested.
+
+Current search requirements:
 
 Products
 
@@ -300,181 +233,166 @@ Customers
 Orders
 
 - Order ID
+- Customer Name
 
-Inventory
-
-- SKU (if implemented later)
-
-The search implementation should be reusable across modules.
+Do not add advanced filtering unless requested.
 
 ---
 
-# Reports
+# Images
 
-Version 1 includes **no reporting module**.
+Products may contain images.
 
-The architecture should make adding reports later straightforward.
+The implementation of image storage should remain abstract.
 
----
-
-# Notifications
-
-No notification system.
+Do not tightly couple image uploads to any specific provider.
 
 ---
 
-# Audit Logs
+# Performance
 
-No audit logging.
+Performance is a priority.
 
-Future support should be possible without restructuring the project.
+The application should feel responsive.
+
+Avoid:
+
+- Unnecessary API requests
+- Duplicate queries
+- Polling
+- Frequent refetching
+- Unnecessary re-renders
+
+Prefer caching whenever appropriate.
+
+Only refresh data when necessary.
 
 ---
 
-# Database Design Principles
+# Database Principles
 
-Normalize relational data.
+Keep the schema simple.
 
-Avoid duplicate information.
+Normalize relationships.
 
-Relationships should be explicit.
+Avoid duplicate data.
 
-Expected entities include:
+Only introduce new tables when there is a clear business requirement.
 
-- Users
-- Categories
-- Products
-- ProductVariants
-- Customers
-- Orders
-- OrderItems
-
-Additional entities should only be introduced when there is a clear business need.
+Current entities should remain minimal.
 
 ---
 
 # Architecture
 
-Prefer a feature-based architecture.
+Follow the existing project structure.
 
-Example:
+Do not reorganize folders unless requested.
 
-src/
-
-    app/
-
-    features/
-
-        auth/
-
-        dashboard/
-
-        products/
-
-        categories/
-
-        inventory/
-
-        customers/
-
-        orders/
-
-    components/
-
-    lib/
-
-    services/
-
-    hooks/
-
-    types/
-
-    utils/
-
-    prisma/
-
-Each feature should encapsulate:
+Separate:
 
 - UI
-- API calls
+- Business Logic
 - Validation
-- Business logic
-- Components
+- Database Access
 
-Avoid placing unrelated code together.
-
----
-
-# Development Philosophy
-
-The application should prioritize:
-
-- Simplicity
-- Maintainability
-- Readability
-- Consistency
+Avoid unnecessary abstractions.
 
 Avoid premature optimization.
 
-Avoid building features that have not been requested.
+---
 
-When requirements are unclear, prefer asking rather than assuming.
+# UI Guidelines
+
+This application is an internal business tool.
+
+The interface should be:
+
+- Clean
+- Fast
+- Professional
+- Consistent
+- Easy to use
+
+Do not redesign the interface unless explicitly requested.
+
+Avoid unnecessary animations or visual effects.
 
 ---
 
 # Coding Standards
 
 - Use TypeScript.
-- Favor server components where appropriate.
-- Keep components focused and small.
+- Keep components small and focused.
+- Prefer Server Components where appropriate.
+- Reuse existing components.
 - Avoid duplicated logic.
-- Prefer composition over inheritance.
-- Keep functions pure when possible.
-- Use descriptive naming.
-- Write reusable utilities.
-- Separate business logic from UI.
+- Use descriptive names.
+- Keep business logic out of UI components.
+- Prefer readability over clever code.
 
 ---
 
-# Agent Guidelines
+# Out of Scope
 
-When working on this project:
+Do not implement:
 
-- Never invent business rules.
-- Never implement features that haven't been requested.
-- Ask for clarification instead of making assumptions.
-- Keep commits focused.
-- Avoid unnecessary dependencies.
-- Minimize complexity.
-- Write production-ready code.
-- Keep the UI clean and responsive.
-- Maintain consistent naming and folder structure.
-
-If a requirement is marked as "to be decided later," leave extension points rather than hardcoding assumptions.
-
----
-
-# Future Features (Not Yet Implemented)
-
-Potential future additions include:
-
-- Role-based access control
-- Inventory history
+- E-commerce functionality
+- Customer accounts
+- Reports
+- Analytics
+- Notifications
 - Supplier management
 - Purchase orders
-- Reports and analytics
-- Notifications
-- Barcode scanning
-- Returns and exchanges
-- Receipt printing
+- Inventory history
+- Returns
 - Audit logs
+- Role management
+- Barcode scanning
 - Multi-store support
-- Advanced search filters
-
-These features should not influence the Version 1 implementation beyond keeping the architecture extensible.
+- Discounts
+- Coupons
+- Payment processing
+- Shipping integrations
+- Any feature that has not been explicitly requested
 
 ---
 
-# Core Principle
+# Agent Rules
 
-Build a clean, dependable internal system for Aara Clothing that solves today's operational needs without adding unnecessary complexity. Whenever requirements are ambiguous or incomplete, stop and ask for clarification instead of making assumptions.
+Always follow these rules.
+
+- Never guess business requirements.
+- Never invent new features.
+- Never add pages that were not requested.
+- Never create database tables without approval.
+- Never redesign workflows.
+- Never introduce unnecessary dependencies.
+- Never over-engineer solutions.
+- Ask questions whenever requirements are ambiguous.
+- Prefer removing complexity over adding functionality.
+- Keep commits focused.
+- Write production-ready code.
+- Maintain consistency throughout the project.
+
+If something is not explicitly mentioned in this document or by the user, assume it should **not** be implemented.
+
+---
+
+# Development Philosophy
+
+Version 1 is focused on solving today's operational needs.
+
+The objective is to build a dependable internal system—not a feature-rich platform.
+
+Every decision should prioritize:
+
+- Simplicity
+- Stability
+- Maintainability
+- Performance
+- Clear user workflows
+
+If a feature does not directly support the day-to-day operation of Aara Clothing, do not implement it.
+
+When in doubt, ask before writing code.

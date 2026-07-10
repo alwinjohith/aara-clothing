@@ -3,12 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Package,
-  Layers,
-  Users,
   ShoppingCart,
-  AlertTriangle,
   XCircle,
-  ClipboardList,
   Clock,
   RefreshCw,
   CheckCircle2,
@@ -17,12 +13,8 @@ import {
 
 interface Stats {
   totalProducts: number;
-  totalVariants: number;
-  totalCustomers: number;
   totalStockUnits: number;
-  lowStockProducts: number;
   outOfStockProducts: number;
-  todayOrders: number;
   pendingOrders: number;
   processingOrders: number;
   completedOrders: number;
@@ -36,10 +28,20 @@ interface Props {
 export function DashboardWidgets({ stats }: Props) {
   const cards = [
     {
-      title: "Today's Orders",
-      value: stats.todayOrders,
-      icon: ClipboardList,
-      className: stats.todayOrders > 0 ? "text-blue-600" : undefined,
+      title: "Total Products",
+      value: stats.totalProducts,
+      icon: Package,
+    },
+    {
+      title: "Total Stock Units",
+      value: stats.totalStockUnits,
+      icon: ShoppingCart,
+    },
+    {
+      title: "Out of Stock",
+      value: stats.outOfStockProducts,
+      icon: XCircle,
+      className: stats.outOfStockProducts > 0 ? "text-destructive" : undefined,
     },
     {
       title: "Pending Orders",
@@ -64,38 +66,6 @@ export function DashboardWidgets({ stats }: Props) {
       value: stats.cancelledOrders,
       icon: Ban,
       className: stats.cancelledOrders > 0 ? "text-destructive" : undefined,
-    },
-    {
-      title: "Total Products",
-      value: stats.totalProducts,
-      icon: Package,
-    },
-    {
-      title: "Total Variants",
-      value: stats.totalVariants,
-      icon: Layers,
-    },
-    {
-      title: "Total Customers",
-      value: stats.totalCustomers,
-      icon: Users,
-    },
-    {
-      title: "Total Stock Units",
-      value: stats.totalStockUnits,
-      icon: ShoppingCart,
-    },
-    {
-      title: "Low Stock",
-      value: stats.lowStockProducts,
-      icon: AlertTriangle,
-      className: stats.lowStockProducts > 0 ? "text-amber-600" : undefined,
-    },
-    {
-      title: "Out of Stock",
-      value: stats.outOfStockProducts,
-      icon: XCircle,
-      className: stats.outOfStockProducts > 0 ? "text-destructive" : undefined,
     },
   ];
 

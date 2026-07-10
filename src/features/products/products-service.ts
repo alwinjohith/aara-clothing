@@ -12,23 +12,53 @@ export async function listProducts(query: ProductQuery) {
   const where: Record<string, unknown> = { deletedAt: null };
 
   if (search) {
-    where.name = { contains: search, mode: "insensitive" };
+    where.OR = [
+      { product: { name: { contains: search, mode: "insensitive" } } },
+      { sku: { contains: search, mode: "insensitive" } },
+      { color: { contains: search, mode: "insensitive" } },
+      { size: { contains: search, mode: "insensitive" } },
+    ];
   }
 
   const [data, total] = await Promise.all([
-    prisma.product.findMany({
-      where,
+    prisma.productVariant.findMany({
+      where: {
+        product: { deletedAt: null },
+        ...(search
+          ? {
+              OR: [
+                { product: { name: { contains: search, mode: "insensitive" } } },
+                { sku: { contains: search, mode: "insensitive" } },
+                { color: { contains: search, mode: "insensitive" } },
+                { size: { contains: search, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
       skip,
       take: limit,
       include: {
-        category: {
-          select: { id: true, name: true },
+        product: {
+          select: { id: true, name: true, isActive: true },
         },
-        _count: { select: { variants: true } },
       },
       orderBy: { createdAt: "desc" },
     }),
-    prisma.product.count({ where }),
+    prisma.productVariant.count({
+      where: {
+        product: { deletedAt: null },
+        ...(search
+          ? {
+              OR: [
+                { product: { name: { contains: search, mode: "insensitive" } } },
+                { sku: { contains: search, mode: "insensitive" } },
+                { color: { contains: search, mode: "insensitive" } },
+                { size: { contains: search, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
+    }),
   ]);
 
   return serialize({
@@ -119,5 +149,78 @@ export async function deleteProduct(id: string) {
   return prisma.product.update({
     where: { id },
     data: { deletedAt: new Date() },
+  });
+}
+
+export async function getVariantStock(id: string) {
+  return prisma.productVariant.findUnique({
+    where: { id },
+    include: {
+      product: {
+        select: { id: true, name: true, deletedAt: true },
+      },
+    },
+  });
+}
+
+export async function updateStock(id: string, stock: number) {
+  const existing = await prisma.productVariant.findUnique({
+    where: { id },
+    include: {
+      product: { select: { deletedAt: true } },
+    },
+  });
+
+  if (!existing) {
+    throw new Error("Variant not found");
+  }
+
+  if (existing.product.deletedAt) {
+    throw new Error("Cannot update stock for a deleted product");
+  }
+
+  return prisma.productVariant.update({
+    where: { id },
+    data: { stock },
+    include: {
+      product: {
+        select: { id: true, name: true },
+      },
+    },
+  });
+}
+
+export async function adjustStock(id: string, amount: number) {
+  const existing = await prisma.productVariant.findUnique({
+    where: { id },
+    include: {
+      product: { select: { deletedAt: true } },
+    },
+  });
+
+  if (!existing) {
+    throw new Error("Variant not found");
+  }
+
+  if (existing.product.deletedAt) {
+    throw new Error("Cannot update stock for a deleted product");
+  }
+
+  const newStock = existing.stock + amount;
+
+  if (newStock < 0) {
+    throw new Error(
+      `Insufficient stock. Current stock: ${existing.stock}, adjustment: ${amount}`
+    );
+  }
+
+  return prisma.productVariant.update({
+    where: { id },
+    data: { stock: newStock },
+    include: {
+      product: {
+        select: { id: true, name: true },
+      },
+    },
   });
 }

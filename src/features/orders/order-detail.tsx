@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { OrderStatusBadge } from "./order-status-badge";
 import { ORDER_STATUSES, getValidOrderStatusTransitions } from "@/lib/constants";
 import { formatCurrency, formatDate, formatDateTime } from "@/utils/format";

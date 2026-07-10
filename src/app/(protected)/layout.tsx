@@ -48,27 +48,6 @@ export default async function ProtectedLayout({
               Products
             </Link>
             <Link
-              href={ROUTES.CATEGORIES}
-              prefetch={true}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Categories
-            </Link>
-            <Link
-              href={ROUTES.INVENTORY}
-              prefetch={true}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Inventory
-            </Link>
-            <Link
-              href={ROUTES.ORDERS}
-              prefetch={true}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Orders
-            </Link>
-            <Link
               href={ROUTES.CUSTOMERS}
               prefetch={true}
               className="text-sm text-muted-foreground hover:text-foreground"

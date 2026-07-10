@@ -39,6 +39,7 @@ interface OrderItemEntry {
 
 interface OrderFormProps {
   mode: "create" | "edit";
+  customerId?: string;
   initialData?: {
     id: string;
     customerId: string;
@@ -54,11 +55,11 @@ interface OrderFormProps {
   };
 }
 
-export function OrderForm({ mode, initialData }: OrderFormProps) {
+export function OrderForm({ mode, customerId: preselectedCustomerId, initialData }: OrderFormProps) {
   const router = useRouter();
   const isEdit = mode === "edit";
 
-  const [customerId, setCustomerId] = useState(initialData?.customerId ?? "");
+  const [customerId, setCustomerId] = useState(initialData?.customerId ?? preselectedCustomerId ?? "");
   const [customerSearch, setCustomerSearch] = useState(
     initialData?.customer.name ?? ""
   );
@@ -108,6 +109,20 @@ export function OrderForm({ mode, initialData }: OrderFormProps) {
       setProducts([]);
     }
   }, []);
+
+  useEffect(() => {
+    if (preselectedCustomerId && !initialData) {
+      fetch(`/api/customers/${preselectedCustomerId}`)
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.success) {
+            const c = result.data;
+            setCustomerSearch(`${c.name} (${c.phone})`);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [preselectedCustomerId, initialData]);
 
   useEffect(() => {
     const timer = setTimeout(() => searchCustomers(customerSearch), 500);
@@ -231,6 +246,7 @@ export function OrderForm({ mode, initialData }: OrderFormProps) {
                   setTimeout(() => setShowCustomerDropdown(false), 200)
                 }
                 placeholder="Search customers..."
+                disabled={!!preselectedCustomerId && !initialData}
               />
               {showCustomerDropdown && customers.length > 0 && (
                 <div className="absolute z-10 mt-1 w-full rounded-md border bg-popover shadow-md">

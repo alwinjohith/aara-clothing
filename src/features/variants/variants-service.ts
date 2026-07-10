@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { CreateVariantInput, UpdateVariantInput } from "./variants-validation";
+import type { CreateVariantInput } from "./variants-validation";
 
 export async function listVariants(productId: string) {
   return prisma.productVariant.findMany({
@@ -10,17 +10,6 @@ export async function listVariants(productId: string) {
       },
     },
     orderBy: { createdAt: "asc" },
-  });
-}
-
-export async function getVariantById(id: string) {
-  return prisma.productVariant.findUnique({
-    where: { id },
-    include: {
-      images: {
-        orderBy: { createdAt: "asc" },
-      },
-    },
   });
 }
 
@@ -47,39 +36,6 @@ export async function createVariant(input: CreateVariantInput) {
       images: true,
     },
   });
-}
-
-export async function updateVariant(id: string, input: UpdateVariantInput) {
-  const existing = await prisma.productVariant.findUnique({ where: { id } });
-  if (!existing) return null;
-
-  if (input.sku && input.sku !== existing.sku) {
-    const existingSku = await prisma.productVariant.findUnique({
-      where: { sku: input.sku },
-    });
-    if (existingSku) throw new Error("SKU already exists");
-  }
-
-  const data: Record<string, unknown> = {};
-  if (input.color !== undefined) data.color = input.color;
-  if (input.size !== undefined) data.size = input.size;
-  if (input.sku !== undefined) data.sku = input.sku;
-  if (input.stock !== undefined) data.stock = input.stock;
-
-  return prisma.productVariant.update({
-    where: { id },
-    data,
-    include: {
-      images: true,
-    },
-  });
-}
-
-export async function deleteVariant(id: string) {
-  const existing = await prisma.productVariant.findUnique({ where: { id } });
-  if (!existing) return null;
-
-  return prisma.productVariant.delete({ where: { id } });
 }
 
 export async function addImageToVariant(variantId: string, url: string) {

@@ -1,6 +1,6 @@
 import { successResponse, errorResponse } from "@/lib/api-response";
-import { getVariantStock, updateStock, adjustStock } from "@/features/inventory/inventory-service";
-import { updateStockSchema, adjustStockSchema } from "@/features/inventory/inventory-validation";
+import { getVariantStock, updateStock, adjustStock } from "@/features/products/products-service";
+import { updateStockSchema, adjustStockSchema } from "@/features/products/products-validation";
 
 export async function GET(
   _request: Request,
@@ -32,7 +32,7 @@ export async function PATCH(
     }
 
     const input = updateStockSchema.parse(body);
-    const variant = await updateStock(id, input);
+    const variant = await updateStock(id, input.stock);
     if (!variant) return errorResponse("Variant not found", 404);
     return successResponse(variant, "Stock updated");
   } catch (error) {

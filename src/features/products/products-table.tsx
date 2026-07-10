@@ -1,102 +1,101 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { DataTable } from "@/components/data-table";
 import { Pagination } from "@/components/pagination";
 import { SearchInput } from "@/components/search-input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { StockUpdateDialog } from "./stock-update-dialog";
+import { getStockStatus, STOCK_STATUS_LABELS } from "@/lib/constants";
+import { Pencil } from "lucide-react";
 import type { Column } from "@/components/data-table";
 
-interface ProductRow {
+interface VariantRow {
   id: string;
-  name: string;
-  categoryName: string;
-  variantCount: number;
-  isActive: boolean;
+  productId: string;
+  product: { id: string; name: string; isActive: boolean };
+  color: string;
+  size: string;
+  sku: string;
+  stock: number;
   createdAt: Date;
 }
 
 interface Props {
-  data: ProductRow[];
+  data: VariantRow[];
   page: number;
   totalPages: number;
   search: string;
 }
 
+function StockBadge({ stock }: { stock: number }) {
+  const status = getStockStatus(stock);
+  const variantMap = {
+    in_stock: "success" as const,
+    low_stock: "warning" as const,
+    out_of_stock: "destructive" as const,
+  };
+
+  return (
+    <Badge variant={variantMap[status]}>
+      {STOCK_STATUS_LABELS[status]} ({stock})
+    </Badge>
+  );
+}
+
 export function ProductsTable({ data, page, totalPages, search }: Props) {
   const router = useRouter();
+  const [editingVariant, setEditingVariant] = useState<VariantRow | null>(null);
 
-  async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this product?")) return;
-
-    try {
-      const response = await fetch(`/api/products/${id}`, {
-        method: "DELETE",
-      });
-      const result = await response.json();
-      if (!result.success) throw new Error(result.error);
-      router.refresh();
-    } catch (error) {
-      if (error instanceof Error) alert(error.message);
-    }
-  }
-
-  const columns: Column<ProductRow>[] = [
+  const columns: Column<VariantRow>[] = [
     {
-      key: "name",
-      header: "Name",
+      key: "product",
+      header: "Product",
       cell: (item) => (
         <Link
-          href={`/dashboard/products/${item.id}`}
+          href={`/dashboard/products/${item.productId}`}
           className="font-medium hover:underline"
         >
-          {item.name}
+          {item.product.name}
         </Link>
       ),
     },
     {
-      key: "categoryName",
-      header: "Category",
+      key: "sku",
+      header: "SKU",
+      cell: (item) => (
+        <span className="font-mono text-xs">{item.sku}</span>
+      ),
     },
     {
-      key: "variantCount",
-      header: "Variants",
+      key: "color",
+      header: "Color",
+    },
+    {
+      key: "size",
+      header: "Size",
+    },
+    {
+      key: "stock",
+      header: "Stock",
       className: "text-center",
-    },
-    {
-      key: "isActive",
-      header: "Status",
-      cell: (item) =>
-        item.isActive ? (
-          <Badge variant="success">Active</Badge>
-        ) : (
-          <Badge variant="secondary">Inactive</Badge>
-        ),
-    },
-    {
-      key: "createdAt",
-      header: "Created At",
-      cell: (item) => new Date(item.createdAt).toLocaleDateString(),
+      cell: (item) => <StockBadge stock={item.stock} />,
     },
     {
       key: "actions",
       header: "Actions",
       cell: (item) => (
         <div className="flex gap-2">
-          <Link href={`/dashboard/products/${item.id}`}>
-            <Button variant="ghost" size="icon-sm">
-              <Pencil className="size-4" />
-            </Button>
-          </Link>
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={() => handleDelete(item.id)}
+            onClick={() => setEditingVariant(item)}
           >
-            <Trash2 className="size-4 text-destructive" />
+            <Pencil className="size-4" />
           </Button>
         </div>
       ),
@@ -113,7 +112,7 @@ export function ProductsTable({ data, page, totalPages, search }: Props) {
           url.searchParams.delete("page");
           router.push(url.pathname + url.search);
         }}
-        placeholder="Search products..."
+        placeholder="Search by product, SKU, color, or size..."
       />
       <DataTable
         columns={columns}
@@ -130,6 +129,20 @@ export function ProductsTable({ data, page, totalPages, search }: Props) {
           router.push(url.pathname + url.search);
         }}
       />
+      {editingVariant && (
+        <StockUpdateDialog
+          variant={editingVariant}
+          open={!!editingVariant}
+          onOpenChange={(open) => {
+            if (!open) setEditingVariant(null);
+          }}
+          onUpdated={() => {
+            setEditingVariant(null);
+            toast.success("Stock updated successfully");
+            router.refresh();
+          }}
+        />
+      )}
     </div>
   );
 }
