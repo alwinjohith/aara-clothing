@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   title: "Aara Clothing - Inventory & Order Management",
   description:
     "Internal Inventory & Order Management System for Aara Clothing",
+  icons: [{ rel: "icon", url: "/aara-logo.jpg" }],
 };
 
 export default function RootLayout({

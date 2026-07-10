@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 import { SignOutButton } from "@/features/auth/sign-out-button";
@@ -21,9 +22,16 @@ export default async function ProtectedLayout({
         <div className="flex h-14 items-center justify-between px-6">
           <Link
             href={ROUTES.DASHBOARD}
-            className="text-lg font-semibold tracking-tight"
+            className="flex items-center"
           >
-            Aara Clothing
+            <Image
+              src="/aara-logo-white.png"
+              alt="Aara Clothing"
+              height={32}
+              width={64}
+              className="h-8 w-auto"
+              priority
+            />
           </Link>
           <nav className="flex items-center gap-6">
             <Link
