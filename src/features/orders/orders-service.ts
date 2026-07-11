@@ -170,8 +170,8 @@ export async function updateOrder(id: string, input: UpdateOrderInput) {
     include: { items: true },
   });
   if (!existing) throw new Error("Order not found");
-  if (existing.status !== "PENDING") {
-    throw new Error("Only pending orders can be edited");
+  if (existing.status !== "NOT_STARTED") {
+    throw new Error("Only orders with 'Not Started' status can be edited");
   }
 
   const variantIds = input.items.map((i) => i.variantId);
@@ -298,15 +298,6 @@ export async function updateOrderStatus(id: string, status: OrderStatus) {
   }
 
   return prisma.$transaction(async (tx) => {
-    if (status === "CANCELLED") {
-      for (const item of existing.items) {
-        await tx.productVariant.update({
-          where: { id: item.variantId },
-          data: { stock: { increment: item.quantity } },
-        });
-      }
-    }
-
     return tx.order.update({
       where: { id },
       data: { status },

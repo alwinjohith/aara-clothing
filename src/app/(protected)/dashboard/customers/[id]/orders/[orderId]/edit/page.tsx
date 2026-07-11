@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getOrderById } from "@/features/orders/orders-service";
 import { getCustomerById } from "@/features/customers/customers-service";
 import { OrderForm } from "@/features/orders/order-form";
+import { ORDER_STATUS_LABELS } from "@/lib/constants";
 
 interface Props {
   params: Promise<{ id: string; orderId: string }>;
@@ -16,12 +17,12 @@ export default async function EditOrderPage({ params }: Props) {
   const order = await getOrderById(orderId);
   if (!order || order.customerId !== customerId) notFound();
 
-  if (order.status !== "PENDING") {
+  if (order.status !== "NOT_STARTED") {
     return (
       <div>
         <h2 className="text-xl font-semibold tracking-tight">Cannot Edit Order</h2>
         <p className="text-muted-foreground">
-          Only pending orders can be edited. This order is currently {order.status.toLowerCase()}.
+          Only orders with &apos;Not Started&apos; status can be edited. This order is currently {ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS] ?? order.status.toLowerCase()}.
         </p>
       </div>
     );
@@ -45,6 +46,7 @@ export default async function EditOrderPage({ params }: Props) {
         customerId={customerId}
         orderId={orderId}
         initialItems={items}
+        initialStatus={order.status}
         mode="edit"
       />
     </div>

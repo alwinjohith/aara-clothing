@@ -9,9 +9,7 @@ import {
   ShoppingCart,
   AlertTriangle,
   XCircle,
-  Clock,
   CheckCircle,
-  XOctagon,
 } from "lucide-react";
 
 interface Stats {
@@ -21,11 +19,7 @@ interface Stats {
   totalStockUnits: number;
   lowStockProducts: number;
   outOfStockProducts: number;
-  todayOrders: number;
-  pendingOrders: number;
-  processingOrders: number;
-  deliveredOrders: number;
-  cancelledOrders: number;
+  completedOrders: number;
 }
 
 interface Props {
@@ -34,30 +28,6 @@ interface Props {
 
 export function DashboardWidgets({ stats }: Props) {
   const cards = [
-    {
-      title: "Today's Orders",
-      value: stats.todayOrders,
-      icon: ShoppingCart,
-      href: "/dashboard/customers",
-      color: "text-blue-600",
-      bg: "bg-blue-50",
-    },
-    {
-      title: "Pending Orders",
-      value: stats.pendingOrders,
-      icon: Clock,
-      href: "/dashboard/customers",
-      color: "text-amber-600",
-      bg: "bg-amber-50",
-    },
-    {
-      title: "Processing Orders",
-      value: stats.processingOrders,
-      icon: Package,
-      href: "/dashboard/customers",
-      color: "text-purple-600",
-      bg: "bg-purple-50",
-    },
     {
       title: "Total Products",
       value: stats.totalProducts,
@@ -107,20 +77,12 @@ export function DashboardWidgets({ stats }: Props) {
       bg: stats.outOfStockProducts > 0 ? "bg-red-50" : "bg-muted",
     },
     {
-      title: "Delivered Orders",
-      value: stats.deliveredOrders,
+      title: "Completed Orders",
+      value: stats.completedOrders,
       icon: CheckCircle,
       href: "/dashboard/customers",
       color: "text-emerald-600",
       bg: "bg-emerald-50",
-    },
-    {
-      title: "Cancelled Orders",
-      value: stats.cancelledOrders,
-      icon: XOctagon,
-      href: "/dashboard/customers",
-      color: "text-gray-600",
-      bg: "bg-gray-50",
     },
   ];
 

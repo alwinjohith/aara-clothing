@@ -23,10 +23,9 @@ interface Props {
 }
 
 const statusVariantMap: Record<string, "default" | "secondary" | "success" | "destructive" | "warning" | "outline"> = {
-  PENDING: "warning",
+  NOT_STARTED: "warning",
   PROCESSING: "default",
-  DELIVERED: "success",
-  CANCELLED: "destructive",
+  DONE: "success",
 };
 
 export function OrderTable({ data, customerId }: Props) {
@@ -69,7 +68,7 @@ export function OrderTable({ data, customerId }: Props) {
               <Eye className="size-4" />
             </Button>
           </Link>
-          {item.status === "PENDING" && (
+          {item.status === "NOT_STARTED" && (
             <Link href={`/dashboard/customers/${customerId}/orders/${item.id}/edit`}>
               <Button variant="ghost" size="icon-sm">
                 <Pencil className="size-4" />

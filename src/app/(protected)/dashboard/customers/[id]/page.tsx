@@ -156,10 +156,9 @@ export default async function CustomerProfilePage({ params }: Props) {
                 ) : (
                   ordersResult.data.map((order) => {
                     const statusVariant: Record<string, "default" | "secondary" | "success" | "destructive" | "warning" | "outline"> = {
-                      PENDING: "warning",
+                      NOT_STARTED: "warning",
                       PROCESSING: "default",
-                      DELIVERED: "success",
-                      CANCELLED: "destructive",
+                      DONE: "success",
                     };
                     return (
                       <tr key={order.id} className="border-b last:border-0 hover:bg-muted/50">
@@ -183,7 +182,7 @@ export default async function CustomerProfilePage({ params }: Props) {
                             >
                               View
                             </Link>
-                            {order.status === "PENDING" && (
+                            {order.status === "NOT_STARTED" && (
                               <Link
                                 href={`/dashboard/customers/${id}/orders/${order.id}/edit`}
                                 className="text-sm font-medium text-primary hover:underline"

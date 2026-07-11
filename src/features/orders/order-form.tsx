@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -8,13 +8,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Save } from "lucide-react";
+import { ORDER_STATUS_LABELS, ORDER_STATUSES } from "@/lib/constants";
+import type { OrderStatus } from "@/lib/constants";
+
+interface VariantItem {
+  id: string;
+  color: string;
+  size: string;
+  sku: string;
+  stock: number;
+}
 
 interface Product {
   id: string;
   name: string;
   price: number;
-  variants: { id: string; color: string; size: string; sku: string; stock: number }[];
+  variants: VariantItem[];
 }
 
 interface OrderItemRow {
@@ -29,59 +40,48 @@ interface OrderFormProps {
   customerId: string;
   orderId?: string;
   initialItems?: OrderItemRow[];
+  initialStatus?: string;
   mode: "create" | "edit";
 }
 
-export function OrderForm({ customerId, orderId, initialItems, mode }: OrderFormProps) {
+export function OrderForm({ customerId, orderId, initialItems, initialStatus, mode }: OrderFormProps) {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [selectedVariantId, setSelectedVariantId] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [items, setItems] = useState<OrderItemRow[]>(initialItems ?? []);
+  const [orderStatus, setOrderStatus] = useState<OrderStatus>(
+    (initialStatus as OrderStatus) ?? ORDER_STATUSES.NOT_STARTED
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/inventory?limit=1000");
+        const res = await fetch("/api/inventory/stock?limit=500");
         const data = await res.json();
         if (data.success) {
-          const inventoryItems = data.data?.data ?? [];
+          const variantList = data.data?.data ?? [];
           const productMap = new Map<string, Product>();
 
-          for (const inv of inventoryItems) {
-            if (!productMap.has(inv.product.id)) {
-              productMap.set(inv.product.id, {
-                id: inv.product.id,
-                name: inv.product.name,
-                price: 0,
+          for (const v of variantList) {
+            if (!productMap.has(v.product.id)) {
+              productMap.set(v.product.id, {
+                id: v.product.id,
+                name: v.product.name,
+                price: Number(v.product.price),
                 variants: [],
               });
             }
-            productMap.get(inv.product.id)!.variants.push({
-              id: inv.id,
-              color: inv.color,
-              size: inv.size,
-              sku: inv.sku,
-              stock: inv.stock,
+            productMap.get(v.product.id)!.variants.push({
+              id: v.id,
+              color: v.color,
+              size: v.size,
+              sku: v.sku,
+              stock: v.stock,
             });
-          }
-
-          const productPrices = await Promise.all(
-            Array.from(productMap.keys()).map(async (pid) => {
-              const res = await fetch(`/api/inventory/${pid}`);
-              const data = await res.json();
-              return data.success ? { id: pid, price: data.data?.price ?? 0 } : null;
-            })
-          );
-
-          for (const pp of productPrices) {
-            if (pp) {
-              const p = productMap.get(pp.id);
-              if (p) p.price = Number(pp.price);
-            }
           }
 
           setProducts(Array.from(productMap.values()));
@@ -98,20 +98,29 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
   const selectedProduct = products.find((p) => p.id === selectedProductId);
   const variants = selectedProduct?.variants ?? [];
 
+  const totalItems = useMemo(
+    () => items.reduce((sum, item) => sum + item.quantity, 0),
+    [items]
+  );
+
   function handleAddItem() {
+    if (!selectedProductId) {
+      toast.error("Please select a product");
+      return;
+    }
     if (!selectedVariantId) {
       toast.error("Please select a variant");
       return;
     }
     if (quantity < 1) {
-      toast.error("Quantity must be greater than zero");
+      toast.error("Quantity must be at least 1");
       return;
     }
 
     const variant = variants.find((v) => v.id === selectedVariantId);
     if (!variant) return;
 
-    if (variant.stock < quantity) {
+    if (quantity > variant.stock) {
       toast.error(`Insufficient stock. Available: ${variant.stock}`);
       return;
     }
@@ -140,6 +149,20 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
     setItems(items.filter((i) => i.variantId !== variantId));
   }
 
+  function handleQuantityChange(variantId: string, newQty: number) {
+    if (newQty < 1) return;
+    setItems((prev) =>
+      prev.map((item) => {
+        if (item.variantId !== variantId) return item;
+        if (newQty > item.stock) {
+          toast.error(`Cannot exceed available stock of ${item.stock}`);
+          return { ...item, quantity: item.stock };
+        }
+        return { ...item, quantity: newQty };
+      })
+    );
+  }
+
   async function handleSubmit() {
     if (items.length === 0) {
       toast.error("Add at least one item");
@@ -148,7 +171,7 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
 
     setIsSubmitting(true);
     try {
-      const body = {
+      const itemsBody = {
         ...(mode === "create" ? { customerId } : {}),
         items: items.map((i) => ({
           variantId: i.variantId,
@@ -164,11 +187,21 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify(itemsBody),
       });
 
       const result = await res.json();
       if (!result.success) throw new Error(result.error);
+
+      if (mode === "edit" && initialStatus !== orderStatus) {
+        const statusRes = await fetch(`/api/orders/${orderId}/status`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: orderStatus }),
+        });
+        const statusResult = await statusRes.json();
+        if (!statusResult.success) throw new Error(statusResult.error);
+      }
 
       toast.success(
         mode === "create" ? "Order created successfully" : "Order updated successfully"
@@ -199,7 +232,11 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
                 <Label>Product</Label>
                 <Select
                   value={selectedProductId}
-                  onChange={setSelectedProductId}
+                  onChange={(val) => {
+                    setSelectedProductId(val);
+                    setSelectedVariantId("");
+                    setQuantity(1);
+                  }}
                   placeholder="Select a product"
                   items={products.map((p) => ({
                     value: p.id,
@@ -213,7 +250,10 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
                   <Label>Variant</Label>
                   <Select
                     value={selectedVariantId}
-                    onChange={setSelectedVariantId}
+                    onChange={(val) => {
+                      setSelectedVariantId(val);
+                      setQuantity(1);
+                    }}
                     placeholder="Select variant"
                     items={variants.map((v) => ({
                       value: v.id,
@@ -230,6 +270,7 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
                     <Input
                       type="number"
                       min={1}
+                      max={variants.find((v) => v.id === selectedVariantId)?.stock ?? 999}
                       value={quantity}
                       onChange={(e) => setQuantity(Number(e.target.value))}
                       className="min-w-0 flex-1"
@@ -255,8 +296,8 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
                       <tr className="border-b text-left">
                         <th className="px-4 py-2 font-medium text-muted-foreground">Product</th>
                         <th className="px-4 py-2 font-medium text-muted-foreground">Variant</th>
-                        <th className="px-4 py-2 font-medium text-muted-foreground">Qty</th>
-                        <th className="px-4 py-2 font-medium text-muted-foreground">Stock</th>
+                        <th className="px-4 py-2 font-medium text-muted-foreground text-center">Qty</th>
+                        <th className="px-4 py-2 font-medium text-muted-foreground text-center">Stock</th>
                         <th className="px-4 py-2" />
                       </tr>
                     </thead>
@@ -265,8 +306,19 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
                         <tr key={item.variantId} className="border-b last:border-0">
                           <td className="px-4 py-2">{item.productName}</td>
                           <td className="px-4 py-2">{item.variantLabel}</td>
-                          <td className="px-4 py-2">{item.quantity}</td>
-                          <td className="px-4 py-2">{item.stock}</td>
+                          <td className="px-4 py-2 text-center">
+                            <Input
+                              type="number"
+                              min={1}
+                              max={item.stock}
+                              value={item.quantity}
+                              onChange={(e) =>
+                                handleQuantityChange(item.variantId, Number(e.target.value))
+                              }
+                              className="h-8 w-20 text-center"
+                            />
+                          </td>
+                          <td className="px-4 py-2 text-center">{item.stock}</td>
                           <td className="px-4 py-2">
                             <Button
                               variant="ghost"
@@ -281,6 +333,35 @@ export function OrderForm({ customerId, orderId, initialItems, mode }: OrderForm
                     </tbody>
                   </table>
                 </div>
+              </div>
+            )}
+
+            {items.length > 0 && (
+              <div className="mt-4 rounded-md border p-4 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Total Items</span>
+                  <span className="font-medium">{totalItems}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Status</span>
+                  <Badge variant={orderStatus === ORDER_STATUSES.DONE ? "success" : orderStatus === ORDER_STATUSES.PROCESSING ? "default" : "warning"}>
+                    {ORDER_STATUS_LABELS[orderStatus]}
+                  </Badge>
+                </div>
+              </div>
+            )}
+
+            {mode === "edit" && (
+              <div className="space-y-2">
+                <Label>Order Status</Label>
+                <Select
+                  value={orderStatus}
+                  onChange={(val) => setOrderStatus(val as OrderStatus)}
+                  items={Object.values(ORDER_STATUSES).map((s) => ({
+                    value: s,
+                    label: ORDER_STATUS_LABELS[s],
+                  }))}
+                />
               </div>
             )}
 

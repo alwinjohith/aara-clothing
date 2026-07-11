@@ -113,7 +113,7 @@ export async function listInventory(query: InventoryQuery) {
   const skip = (page - 1) * limit;
 
   const where: Record<string, unknown> = {
-    product: { deletedAt: null },
+    product: { deletedAt: null, isActive: true },
   };
 
   if (search) {
@@ -132,7 +132,7 @@ export async function listInventory(query: InventoryQuery) {
       take: limit,
       include: {
         product: {
-          select: { id: true, name: true },
+          select: { id: true, name: true, price: true },
         },
       },
       orderBy: { createdAt: "desc" },
