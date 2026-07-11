@@ -1,18 +1,9 @@
 import { Suspense } from "react";
-<<<<<<< HEAD
-import Link from "next/link";
 import { listProducts } from "@/features/inventory/inventory-service";
 import { productQuerySchema } from "@/features/inventory/inventory-validation";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { ProductTable } from "@/features/inventory/product-table";
-import type { Product } from "@/types";
-=======
-import { listInventory } from "@/features/inventory/inventory-service";
-import { inventoryQuerySchema } from "@/features/inventory/inventory-validation";
-import { InventoryTable } from "@/features/inventory/inventory-table";
 import { Boxes } from "lucide-react";
->>>>>>> f2172a4 (added settings)
+import type { Product } from "@/types";
 
 interface ProductRow {
   id: string;
@@ -45,27 +36,6 @@ export default async function InventoryPage({ searchParams }: Props) {
   }));
 
   return (
-<<<<<<< HEAD
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-semibold tracking-tight">Inventory</h2>
-          <p className="text-sm text-muted-foreground">
-            Manage your products and stock levels
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/dashboard/inventory/stock">
-            <Button variant="outline">Manage Stock</Button>
-          </Link>
-          <Link href="/dashboard/inventory/new">
-            <Button>
-              <Plus className="size-4" />
-              New Product
-            </Button>
-          </Link>
-        </div>
-=======
     <div className="space-y-6 p-8">
       <div className="flex items-center gap-3">
         <div className="flex size-10 items-center justify-center rounded-xl gradient-accent">
@@ -76,10 +46,9 @@ export default async function InventoryPage({ searchParams }: Props) {
             Inventory
           </h1>
           <p className="text-sm text-muted-foreground">
-            Manage stock levels for all product variants
+            Manage your products and stock levels
           </p>
         </div>
->>>>>>> f2172a4 (added settings)
       </div>
 
       <Suspense fallback={<div>Loading...</div>}>

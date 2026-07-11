@@ -17,12 +17,12 @@ export default async function EditOrderPage({ params }: Props) {
   const order = await getOrderById(orderId);
   if (!order || order.customerId !== customerId) notFound();
 
-  if (order.status !== "NOT_STARTED") {
+  if (order.status !== "PENDING") {
     return (
       <div>
         <h2 className="text-xl font-semibold tracking-tight">Cannot Edit Order</h2>
         <p className="text-muted-foreground">
-          Only orders with &apos;Not Started&apos; status can be edited. This order is currently {ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS] ?? order.status.toLowerCase()}.
+          Only orders with &apos;Pending&apos; status can be edited. This order is currently {ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS] ?? order.status.toLowerCase()}.
         </p>
       </div>
     );

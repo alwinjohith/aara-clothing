@@ -52,7 +52,7 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
   const [quantity, setQuantity] = useState(1);
   const [items, setItems] = useState<OrderItemRow[]>(initialItems ?? []);
   const [orderStatus, setOrderStatus] = useState<OrderStatus>(
-    (initialStatus as OrderStatus) ?? ORDER_STATUSES.NOT_STARTED
+    (initialStatus as OrderStatus) ?? ORDER_STATUSES.PENDING
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -343,7 +343,7 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Status</span>
-                  <Badge variant={orderStatus === ORDER_STATUSES.DONE ? "success" : orderStatus === ORDER_STATUSES.PROCESSING ? "default" : "warning"}>
+                  <Badge variant={orderStatus === ORDER_STATUSES.DELIVERED ? "success" : orderStatus === ORDER_STATUSES.PROCESSING ? "default" : orderStatus === ORDER_STATUSES.CANCELLED ? "destructive" : "warning"}>
                     {ORDER_STATUS_LABELS[orderStatus]}
                   </Badge>
                 </div>

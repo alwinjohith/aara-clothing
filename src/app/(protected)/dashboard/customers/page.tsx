@@ -21,15 +21,6 @@ export default async function CustomersPage({
   const result = await listCustomers(query);
 
   return (
-<<<<<<< HEAD
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-semibold tracking-tight">Customers</h2>
-          <p className="text-sm text-muted-foreground">
-            Manage your customer database
-          </p>
-=======
     <div className="space-y-6 p-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -44,7 +35,6 @@ export default async function CustomersPage({
               Manage your customer database
             </p>
           </div>
->>>>>>> f2172a4 (added settings)
         </div>
         <Link href="/dashboard/customers/new">
           <Button>

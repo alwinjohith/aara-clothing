@@ -18,20 +18,20 @@ export default async function CustomerProfilePage({ params }: Props) {
   const customer = await getCustomerById(id);
   if (!customer) notFound();
 
-  const stats = await getCustomerOrderStats(id);
-  const ordersResult = await listOrders({
-    page: 1,
-    limit: 100,
-    customerId: id,
-  });
+  const [stats, ordersResult] = await Promise.all([
+    getCustomerOrderStats(id),
+    listOrders({
+      page: 1,
+      limit: 100,
+      customerId: id,
+    }),
+  ]);
 
   return (
-<<<<<<< HEAD
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-6 p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight">{customer.name}</h2>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{customer.name}</h1>
           <p className="text-sm text-muted-foreground">Customer Profile</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -48,17 +48,8 @@ export default async function CustomerProfilePage({ params }: Props) {
             </Button>
           </Link>
         </div>
-=======
-    <div className="p-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Edit Customer
-        </h1>
-        <p className="mt-1 text-muted-foreground">Update customer information</p>
->>>>>>> f2172a4 (added settings)
       </div>
 
-      {/* Section 1 — Customer Information */}
       <Card>
         <CardHeader>
           <CardTitle>Customer Information</CardTitle>
@@ -89,7 +80,6 @@ export default async function CustomerProfilePage({ params }: Props) {
         </CardContent>
       </Card>
 
-      {/* Section 2 — Customer Statistics */}
       {stats && (
         <div className="grid gap-4 sm:grid-cols-3">
           <Card>
@@ -132,7 +122,6 @@ export default async function CustomerProfilePage({ params }: Props) {
         </div>
       )}
 
-      {/* Section 3 — Order History */}
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
           <CardTitle>Order History</CardTitle>
@@ -165,9 +154,10 @@ export default async function CustomerProfilePage({ params }: Props) {
                 ) : (
                   ordersResult.data.map((order) => {
                     const statusVariant: Record<string, "default" | "secondary" | "success" | "destructive" | "warning" | "outline"> = {
-                      NOT_STARTED: "warning",
+                      PENDING: "warning",
                       PROCESSING: "default",
-                      DONE: "success",
+                      DELIVERED: "success",
+                      CANCELLED: "destructive",
                     };
                     return (
                       <tr key={order.id} className="border-b last:border-0 hover:bg-muted/50">
@@ -191,7 +181,7 @@ export default async function CustomerProfilePage({ params }: Props) {
                             >
                               View
                             </Link>
-                            {order.status === "NOT_STARTED" && (
+                            {order.status === "PENDING" && (
                               <Link
                                 href={`/dashboard/customers/${id}/orders/${order.id}/edit`}
                                 className="text-sm font-medium text-primary hover:underline"

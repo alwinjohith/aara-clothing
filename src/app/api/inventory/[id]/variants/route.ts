@@ -1,9 +1,13 @@
 import { successResponse, errorResponse } from "@/lib/api-response";
+import { requireAuth } from "@/lib/auth-guard";
 import { listVariants, createVariant } from "@/features/variants/variants-service";
 import { createVariantSchema } from "@/features/variants/variants-validation";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { id } = await params;
     const variants = await listVariants(id);
     return successResponse(variants);
@@ -14,6 +18,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { id } = await params;
     const body = await request.json();
     const input = createVariantSchema.parse({ ...body, productId: id });

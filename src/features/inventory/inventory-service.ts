@@ -23,6 +23,7 @@ export async function listProducts(query: ProductQuery) {
       skip,
       take: limit,
       include: {
+        category: { select: { id: true, name: true } },
         _count: { select: { variants: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -48,6 +49,7 @@ export async function getProductById(id: string) {
   const product = await prisma.product.findFirst({
     where: { id, deletedAt: null },
     include: {
+      category: { select: { id: true, name: true } },
       variants: {
         include: {
           images: {
@@ -188,36 +190,38 @@ export async function updateStock(id: string, input: UpdateStockInput) {
 }
 
 export async function adjustStock(id: string, amount: number) {
-  const existing = await prisma.productVariant.findUnique({
-    where: { id },
-    include: {
-      product: { select: { deletedAt: true } },
-    },
-  });
-
-  if (!existing) {
-    throw new Error("Variant not found");
-  }
-
-  if (existing.product.deletedAt) {
-    throw new Error("Cannot update stock for a deleted product");
-  }
-
-  const newStock = existing.stock + amount;
-
-  if (newStock < 0) {
-    throw new Error(
-      `Insufficient stock. Current stock: ${existing.stock}, adjustment: ${amount}`
-    );
-  }
-
-  return prisma.productVariant.update({
-    where: { id },
-    data: { stock: newStock },
-    include: {
-      product: {
-        select: { id: true, name: true },
+  return prisma.$transaction(async (tx) => {
+    const existing = await tx.productVariant.findUnique({
+      where: { id },
+      include: {
+        product: { select: { deletedAt: true } },
       },
-    },
+    });
+
+    if (!existing) {
+      throw new Error("Variant not found");
+    }
+
+    if (existing.product.deletedAt) {
+      throw new Error("Cannot update stock for a deleted product");
+    }
+
+    const newStock = existing.stock + amount;
+
+    if (newStock < 0) {
+      throw new Error(
+        `Insufficient stock. Current stock: ${existing.stock}, adjustment: ${amount}`
+      );
+    }
+
+    return tx.productVariant.update({
+      where: { id },
+      data: { stock: newStock },
+      include: {
+        product: {
+          select: { id: true, name: true },
+        },
+      },
+    });
   });
 }

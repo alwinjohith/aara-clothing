@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,14 +22,13 @@ interface Props {
 }
 
 const statusVariantMap: Record<string, "default" | "secondary" | "success" | "destructive" | "warning" | "outline"> = {
-  NOT_STARTED: "warning",
+  PENDING: "warning",
   PROCESSING: "default",
-  DONE: "success",
+  DELIVERED: "success",
+  CANCELLED: "destructive",
 };
 
 export function OrderTable({ data, customerId }: Props) {
-  const router = useRouter();
-
   const columns: Column<OrderRow>[] = [
     {
       key: "orderNumber",
@@ -68,7 +66,7 @@ export function OrderTable({ data, customerId }: Props) {
               <Eye className="size-4" />
             </Button>
           </Link>
-          {item.status === "NOT_STARTED" && (
+          {item.status === "PENDING" && (
             <Link href={`/dashboard/customers/${customerId}/orders/${item.id}/edit`}>
               <Button variant="ghost" size="icon-sm">
                 <Pencil className="size-4" />

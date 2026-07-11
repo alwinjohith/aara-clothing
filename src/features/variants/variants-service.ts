@@ -30,35 +30,34 @@ export async function createVariant(input: CreateVariantInput) {
   });
   if (!product) throw new Error("Product not found");
 
-  const existingSku = await prisma.productVariant.findUnique({
-    where: { sku: input.sku },
-  });
-  if (existingSku) throw new Error("SKU already exists");
-
-  return prisma.productVariant.create({
-    data: {
-      productId: input.productId,
-      color: input.color,
-      size: input.size,
-      sku: input.sku,
-      stock: input.stock ?? 0,
-    },
-    include: {
-      images: true,
-    },
-  });
+  try {
+    return await prisma.productVariant.create({
+      data: {
+        productId: input.productId,
+        color: input.color,
+        size: input.size,
+        sku: input.sku,
+        stock: input.stock ?? 0,
+      },
+      include: {
+        images: true,
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("Unique constraint") &&
+      error.message.includes("sku")
+    ) {
+      throw new Error("SKU already exists");
+    }
+    throw error;
+  }
 }
 
 export async function updateVariant(id: string, input: UpdateVariantInput) {
   const existing = await prisma.productVariant.findUnique({ where: { id } });
   if (!existing) return null;
-
-  if (input.sku && input.sku !== existing.sku) {
-    const existingSku = await prisma.productVariant.findUnique({
-      where: { sku: input.sku },
-    });
-    if (existingSku) throw new Error("SKU already exists");
-  }
 
   const data: Record<string, unknown> = {};
   if (input.color !== undefined) data.color = input.color;
@@ -66,13 +65,24 @@ export async function updateVariant(id: string, input: UpdateVariantInput) {
   if (input.sku !== undefined) data.sku = input.sku;
   if (input.stock !== undefined) data.stock = input.stock;
 
-  return prisma.productVariant.update({
-    where: { id },
-    data,
-    include: {
-      images: true,
-    },
-  });
+  try {
+    return await prisma.productVariant.update({
+      where: { id },
+      data,
+      include: {
+        images: true,
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("Unique constraint") &&
+      error.message.includes("sku")
+    ) {
+      throw new Error("SKU already exists");
+    }
+    throw error;
+  }
 }
 
 export async function deleteVariant(id: string) {

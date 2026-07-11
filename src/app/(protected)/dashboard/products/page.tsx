@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { listProducts } from "@/features/products/products-service";
+import { listProducts } from "@/features/inventory/inventory-service";
 import { Button } from "@/components/ui/button";
 import { Plus, Package2 } from "lucide-react";
 import { ProductsTable } from "@/features/products/products-table";

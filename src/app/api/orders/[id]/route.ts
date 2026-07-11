@@ -1,4 +1,5 @@
 import { successResponse, errorResponse } from "@/lib/api-response";
+import { requireAuth } from "@/lib/auth-guard";
 import { getOrderById, updateOrder } from "@/features/orders/orders-service";
 import { updateOrderSchema } from "@/features/orders/orders-validation";
 
@@ -7,6 +8,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { id } = await params;
     const order = await getOrderById(id);
     if (!order) return errorResponse("Order not found", 404);
@@ -21,6 +25,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { id } = await params;
     const body = await request.json();
     const input = updateOrderSchema.parse(body);

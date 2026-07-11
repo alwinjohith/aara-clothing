@@ -1,9 +1,13 @@
 import { successResponse, errorResponse } from "@/lib/api-response";
+import { requireAuth } from "@/lib/auth-guard";
 import { listCustomers, createCustomer } from "@/features/customers/customers-service";
 import { createCustomerSchema, customerQuerySchema } from "@/features/customers/customers-validation";
 
 export async function GET(request: Request) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { searchParams } = new URL(request.url);
     const query = customerQuerySchema.parse(Object.fromEntries(searchParams));
     const result = await listCustomers(query);
@@ -18,6 +22,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const body = await request.json();
     const input = createCustomerSchema.parse(body);
     const customer = await createCustomer(input);

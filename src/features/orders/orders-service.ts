@@ -90,19 +90,6 @@ export async function createOrder(input: CreateOrderInput, userId: string) {
 
   const variantMap = new Map(variants.map((v) => [v.id, v]));
 
-  for (const item of input.items) {
-    const variant = variantMap.get(item.variantId);
-    if (!variant) throw new Error(`Variant ${item.variantId} not found`);
-    if (variant.product.deletedAt) {
-      throw new Error(`Product "${variant.product.name}" has been deleted`);
-    }
-    if (variant.stock < item.quantity) {
-      throw new Error(
-        `Insufficient stock for ${variant.product.name} (${variant.color}/${variant.size}). Available: ${variant.stock}, requested: ${item.quantity}`
-      );
-    }
-  }
-
   const duplicateVariantIds = input.items
     .map((i) => i.variantId)
     .filter((id, index, arr) => arr.indexOf(id) !== index);
@@ -124,6 +111,28 @@ export async function createOrder(input: CreateOrderInput, userId: string) {
   const subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
 
   const order = await prisma.$transaction(async (tx) => {
+    const currentVariants = await tx.productVariant.findMany({
+      where: { id: { in: variantIds } },
+      include: {
+        product: { select: { id: true, name: true, deletedAt: true } },
+      },
+    });
+
+    const currentVariantMap = new Map(currentVariants.map((v) => [v.id, v]));
+
+    for (const item of input.items) {
+      const variant = currentVariantMap.get(item.variantId);
+      if (!variant) throw new Error(`Variant ${item.variantId} not found`);
+      if (variant.product.deletedAt) {
+        throw new Error(`Product "${variant.product.name}" has been deleted`);
+      }
+      if (variant.stock < item.quantity) {
+        throw new Error(
+          `Insufficient stock for ${variant.product.name} (${variant.color}/${variant.size}). Available: ${variant.stock}, requested: ${item.quantity}`
+        );
+      }
+    }
+
     for (const item of input.items) {
       await tx.productVariant.update({
         where: { id: item.variantId },
@@ -170,8 +179,8 @@ export async function updateOrder(id: string, input: UpdateOrderInput) {
     include: { items: true },
   });
   if (!existing) throw new Error("Order not found");
-  if (existing.status !== "NOT_STARTED") {
-    throw new Error("Only orders with 'Not Started' status can be edited");
+  if (existing.status !== "PENDING") {
+    throw new Error("Only orders with 'Pending' status can be edited");
   }
 
   const variantIds = input.items.map((i) => i.variantId);

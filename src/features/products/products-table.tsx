@@ -6,34 +6,35 @@ import { toast } from "sonner";
 import { DataTable } from "@/components/data-table";
 import { Pagination } from "@/components/pagination";
 import { SearchInput } from "@/components/search-input";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import type { Column } from "@/components/data-table";
 
-interface CategoryRow {
+interface ProductRow {
   id: string;
   name: string;
-  slug: string;
-  parentName: string | null;
-  productCount: number;
+  categoryName: string;
+  variantCount: number;
+  isActive: boolean;
   createdAt: Date;
 }
 
 interface Props {
-  data: CategoryRow[];
+  data: ProductRow[];
   page: number;
   totalPages: number;
   search: string;
 }
 
-export function CategoriesTable({ data, page, totalPages, search }: Props) {
+export function ProductsTable({ data, page, totalPages, search }: Props) {
   const router = useRouter();
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this category?")) return;
+    if (!confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      const response = await fetch(`/api/categories/${id}`, {
+      const response = await fetch(`/api/inventory/${id}`, {
         method: "DELETE",
       });
       const result = await response.json();
@@ -44,13 +45,13 @@ export function CategoriesTable({ data, page, totalPages, search }: Props) {
     }
   }
 
-  const columns: Column<CategoryRow>[] = [
+  const columns: Column<ProductRow>[] = [
     {
       key: "name",
       header: "Name",
       cell: (item) => (
         <Link
-          href={`/dashboard/categories/${item.id}`}
+          href={`/dashboard/products/${item.id}`}
           className="font-medium text-foreground transition-colors hover:text-primary"
         >
           {item.name}
@@ -58,14 +59,24 @@ export function CategoriesTable({ data, page, totalPages, search }: Props) {
       ),
     },
     {
-      key: "parentName",
-      header: "Parent",
-      cell: (item) => item.parentName ?? <span className="text-muted-foreground">-</span>,
+      key: "categoryName",
+      header: "Category",
+      cell: (item) => item.categoryName ?? <span className="text-muted-foreground">-</span>,
     },
     {
-      key: "productCount",
-      header: "Products",
+      key: "variantCount",
+      header: "Variants",
       className: "text-center",
+    },
+    {
+      key: "isActive",
+      header: "Status",
+      cell: (item) =>
+        item.isActive ? (
+          <Badge variant="success">Active</Badge>
+        ) : (
+          <Badge variant="secondary">Inactive</Badge>
+        ),
     },
     {
       key: "createdAt",
@@ -77,7 +88,7 @@ export function CategoriesTable({ data, page, totalPages, search }: Props) {
       header: "Actions",
       cell: (item) => (
         <div className="flex gap-1">
-          <Link href={`/dashboard/categories/${item.id}`}>
+          <Link href={`/dashboard/products/${item.id}`}>
             <Button variant="ghost" size="icon-sm">
               <Pencil className="size-4" />
             </Button>
@@ -95,7 +106,7 @@ export function CategoriesTable({ data, page, totalPages, search }: Props) {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       <SearchInput
         value={search}
         onChange={(val) => {
@@ -104,13 +115,13 @@ export function CategoriesTable({ data, page, totalPages, search }: Props) {
           url.searchParams.delete("page");
           router.push(url.pathname + url.search);
         }}
-        placeholder="Search categories..."
+        placeholder="Search products..."
       />
       <DataTable
         columns={columns}
         data={data}
         keyExtractor={(item) => item.id}
-        emptyMessage="No categories found"
+        emptyMessage="No products found"
       />
       <Pagination
         page={page}

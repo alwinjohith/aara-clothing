@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getProductById } from "@/features/products/products-service";
+import { getProductById } from "@/features/inventory/inventory-service";
 import { getCategoryTree } from "@/features/categories/categories-service";
 import { ProductForm } from "@/features/products/product-form";
 

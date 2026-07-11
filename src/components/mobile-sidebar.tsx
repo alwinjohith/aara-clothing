@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -27,6 +27,8 @@ export function MobileSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const pathname = usePathname();
+  const prevPathnameRef = useRef(pathname);
+  const shouldCloseRef = useRef(false);
 
   const closeSidebar = useCallback(() => {
     setIsAnimating(true);
@@ -37,8 +39,18 @@ export function MobileSidebar() {
   }, []);
 
   useEffect(() => {
-    closeSidebar();
-  }, [pathname, closeSidebar]);
+    if (prevPathnameRef.current !== pathname) {
+      prevPathnameRef.current = pathname;
+      shouldCloseRef.current = true;
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (shouldCloseRef.current && isOpen) {
+      shouldCloseRef.current = false;
+      closeSidebar();
+    }
+  }, [isOpen, closeSidebar]);
 
   useEffect(() => {
     if (isOpen) {
@@ -53,7 +65,6 @@ export function MobileSidebar() {
 
   return (
     <div className="lg:hidden">
-      {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(true)}
         className="fixed left-4 top-4 z-50 flex size-10 items-center justify-center rounded-xl border border-border bg-card shadow-sm transition-all duration-200 hover:bg-muted"
@@ -62,7 +73,6 @@ export function MobileSidebar() {
         <Menu className="size-5" />
       </button>
 
-      {/* Overlay */}
       {isOpen && (
         <div
           className={cn(
@@ -74,7 +84,6 @@ export function MobileSidebar() {
         />
       )}
 
-      {/* Sidebar Panel */}
       {isOpen && (
         <div
           className={cn(
@@ -82,7 +91,6 @@ export function MobileSidebar() {
             isAnimating ? "sidebar-close" : "sidebar-open"
           )}
         >
-          {/* Close Button & Logo */}
           <div className="flex items-center justify-between px-4 py-6">
             <Link href={ROUTES.DASHBOARD} onClick={closeSidebar}>
               <Image
@@ -103,7 +111,6 @@ export function MobileSidebar() {
             </button>
           </div>
 
-          {/* Navigation */}
           <nav className="flex flex-1 flex-col gap-1 px-3">
             {navigation.map((item) => {
               const isActive =
@@ -136,7 +143,6 @@ export function MobileSidebar() {
             })}
           </nav>
 
-          {/* Sign Out */}
           <div className="border-t border-border px-3 py-4">
             <SignOutButton />
           </div>

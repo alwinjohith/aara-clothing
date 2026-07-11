@@ -1,4 +1,5 @@
 import { successResponse, errorResponse } from "@/lib/api-response";
+import { requireAuth } from "@/lib/auth-guard";
 import { getCustomerById, updateCustomer, deleteCustomer } from "@/features/customers/customers-service";
 import { updateCustomerSchema } from "@/features/customers/customers-validation";
 
@@ -7,6 +8,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { id } = await params;
     const customer = await getCustomerById(id);
     if (!customer) return errorResponse("Customer not found", 404);
@@ -21,6 +25,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { id } = await params;
     const body = await request.json();
     const input = updateCustomerSchema.parse(body);
@@ -40,6 +47,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { id } = await params;
     const customer = await deleteCustomer(id);
     if (!customer) return errorResponse("Customer not found", 404);

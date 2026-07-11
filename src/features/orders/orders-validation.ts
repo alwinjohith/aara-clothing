@@ -24,7 +24,7 @@ export const updateOrderSchema = z.object({
 });
 
 export const orderStatusSchema = z.object({
-  status: z.enum(["NOT_STARTED", "PROCESSING", "DONE"]),
+  status: z.enum(["PENDING", "PROCESSING", "DELIVERED", "CANCELLED"]),
 });
 
 export const orderQuerySchema = z.object({

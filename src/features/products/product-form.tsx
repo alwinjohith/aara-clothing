@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { createProductSchema, updateProductSchema, type CreateProductInput, type UpdateProductInput } from "./inventory-validation";
+import { createProductSchema, updateProductSchema, type CreateProductInput, type UpdateProductInput } from "@/features/inventory/inventory-validation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +18,7 @@ import type { Product, ProductVariant } from "@/types";
 interface ProductFormProps {
   mode: "create" | "edit";
   initialData?: Product;
+  categories?: { id: string; name: string }[];
 }
 
 export function ProductForm({ mode, initialData }: ProductFormProps) {
@@ -58,7 +59,7 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
         throw new Error(result.error ?? "Failed to save product");
       }
 
-      router.push("/dashboard/inventory");
+      router.push("/dashboard/products");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

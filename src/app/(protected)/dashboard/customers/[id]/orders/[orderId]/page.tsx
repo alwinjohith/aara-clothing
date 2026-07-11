@@ -14,9 +14,10 @@ interface Props {
 }
 
 const statusVariant: Record<string, "default" | "secondary" | "success" | "destructive" | "warning" | "outline"> = {
-  NOT_STARTED: "warning",
+  PENDING: "warning",
   PROCESSING: "default",
-  DONE: "success",
+  DELIVERED: "success",
+  CANCELLED: "destructive",
 };
 
 export default async function OrderDetailPage({ params }: Props) {
@@ -54,7 +55,7 @@ export default async function OrderDetailPage({ params }: Props) {
           <Badge variant={statusVariant[order.status] ?? "secondary"} className="text-sm px-3 py-1">
             {ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS] ?? order.status}
           </Badge>
-          {order.status === "NOT_STARTED" && (
+          {order.status === "PENDING" && (
             <Link href={`/dashboard/customers/${customerId}/orders/${orderId}/edit`}>
               <Button variant="outline" size="sm">
                 <Pencil className="size-4" />
@@ -136,7 +137,6 @@ export default async function OrderDetailPage({ params }: Props) {
                   <UpdateOrderStatus
                     key={status}
                     orderId={orderId}
-                    customerId={customerId}
                     currentStatus={order.status}
                     newStatus={status}
                   />

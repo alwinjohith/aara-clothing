@@ -2,33 +2,38 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   DASHBOARD: "/dashboard",
+  PRODUCTS: "/dashboard/products",
+  CATEGORIES: "/dashboard/categories",
   INVENTORY: "/dashboard/inventory",
   CUSTOMERS: "/dashboard/customers",
-  SETTINGS: "/dashboard/settings",
   ORDERS: "/dashboard/orders",
+  SETTINGS: "/dashboard/settings",
 } as const;
 
 export const APP_NAME = "Aara Clothing";
 export const APP_DESCRIPTION = "Internal Inventory & Order Management System";
 
 export const ORDER_STATUSES = {
-  NOT_STARTED: "NOT_STARTED",
+  PENDING: "PENDING",
   PROCESSING: "PROCESSING",
-  DONE: "DONE",
+  DELIVERED: "DELIVERED",
+  CANCELLED: "CANCELLED",
 } as const;
 
 export type OrderStatus = (typeof ORDER_STATUSES)[keyof typeof ORDER_STATUSES];
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
-  NOT_STARTED: "Not Started",
+  PENDING: "Pending",
   PROCESSING: "Processing",
-  DONE: "Done",
+  DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
 };
 
 export const ORDER_STATUS_FLOW: Record<OrderStatus, OrderStatus[]> = {
-  NOT_STARTED: ["PROCESSING"],
-  PROCESSING: ["DONE"],
-  DONE: [],
+  PENDING: ["PROCESSING", "CANCELLED"],
+  PROCESSING: ["DELIVERED", "CANCELLED"],
+  DELIVERED: [],
+  CANCELLED: [],
 };
 
 export const STOCK_THRESHOLDS = {

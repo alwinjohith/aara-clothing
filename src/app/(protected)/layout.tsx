@@ -1,11 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
-<<<<<<< HEAD
-import { Sidebar } from "@/components/sidebar";
-import { MobileSidebar } from "@/components/mobile-sidebar";
-import { Header } from "@/components/header";
-=======
 import { SignOutButton } from "@/features/auth/sign-out-button";
 import {
   LayoutDashboard,
@@ -22,7 +18,6 @@ const navItems = [
   { href: ROUTES.CUSTOMERS, label: "Customers", icon: Users },
   { href: ROUTES.SETTINGS, label: "Settings", icon: Settings },
 ];
->>>>>>> f2172a4 (added settings)
 
 export default async function ProtectedLayout({
   children,
@@ -35,32 +30,7 @@ export default async function ProtectedLayout({
     redirect(ROUTES.LOGIN);
   }
 
-  const username = (session.user as { username?: string }).username ?? session.user.name ?? "User";
-
   return (
-<<<<<<< HEAD
-    <div className="min-h-screen overflow-x-hidden bg-background">
-      {/* Mobile Sidebar (hamburger) */}
-      <MobileSidebar />
-
-      {/* Desktop Sidebar */}
-      <Sidebar />
-
-      {/* Main Content Area */}
-      <div className="lg:pl-64">
-        <div className="mx-auto max-w-7xl px-4 pb-6 pt-16 sm:px-6 lg:px-8 lg:pb-6 lg:pt-6">
-          {/* Header with Greeting + Actions */}
-          <Header username={username} />
-
-          {/* Page Content */}
-          <main>
-            <div className="overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6 lg:p-6">
-              {children}
-            </div>
-          </main>
-        </div>
-      </div>
-=======
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="pin-stripe absolute inset-0 opacity-30 pointer-events-none" />
@@ -108,7 +78,6 @@ export default async function ProtectedLayout({
         <div className="pin-stripe-vertical absolute top-16 left-0 h-[calc(100%-4rem)] w-4 opacity-20 pointer-events-none" />
         {children}
       </main>
->>>>>>> f2172a4 (added settings)
     </div>
   );
 }

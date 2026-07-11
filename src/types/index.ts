@@ -90,4 +90,15 @@ export interface OrderItem {
   subtotal: number;
 }
 
-export type OrderStatus = "NOT_STARTED" | "PROCESSING" | "DONE";
+export type OrderStatus = "PENDING" | "PROCESSING" | "DELIVERED" | "CANCELLED";
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  parentId: string | null;
+  parent?: { id: string; name: string } | null;
+  children?: { id: string; name: string }[];
+  createdAt: Date;
+  updatedAt: Date;
+}

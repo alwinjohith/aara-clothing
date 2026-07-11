@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { updateStockSchema, type UpdateStockInput } from "./inventory-validation";
 import {
   Dialog,
@@ -79,7 +80,7 @@ export function StockUpdateDialog({
       onUpdated();
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        toast.error(error.message);
       }
     }
   }

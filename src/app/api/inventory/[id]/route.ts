@@ -1,9 +1,13 @@
 import { successResponse, errorResponse } from "@/lib/api-response";
+import { requireAuth } from "@/lib/auth-guard";
 import { getProductById, updateProduct, deleteProduct } from "@/features/inventory/inventory-service";
 import { updateProductSchema } from "@/features/inventory/inventory-validation";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { id } = await params;
     const product = await getProductById(id);
     if (!product) return errorResponse("Product not found", 404);
@@ -15,6 +19,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { id } = await params;
     const body = await request.json();
     const input = updateProductSchema.parse(body);
@@ -31,6 +38,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const authResult = await requireAuth();
+    if ("error" in authResult) return authResult.error;
+
     const { id } = await params;
     const product = await deleteProduct(id);
     if (!product) return errorResponse("Product not found", 404);

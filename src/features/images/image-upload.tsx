@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -36,7 +37,7 @@ export function ImageUpload({ variantId, images, onImageChange }: ImageUploadPro
       onImageChange();
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        toast.error(error.message);
       }
     } finally {
       setUploading(false);
@@ -57,7 +58,7 @@ export function ImageUpload({ variantId, images, onImageChange }: ImageUploadPro
       onImageChange();
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        toast.error(error.message);
       }
     }
   }
