@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, Save } from "lucide-react";
 import type { Customer } from "@/types";
 
 interface CustomerFormProps {
@@ -73,13 +74,23 @@ export function CustomerForm({ mode, initialData }: CustomerFormProps) {
   return (
     <Card className="mx-auto max-w-lg">
       <CardHeader>
-        <CardTitle>{isEdit ? "Edit Customer" : "Create Customer"}</CardTitle>
+        <div className="flex items-center gap-4">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => router.back()}
+          >
+            <ArrowLeft className="size-4" />
+          </Button>
+          <CardTitle>{isEdit ? "Edit Customer" : "Create Customer"}</CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" {...register("name")} />
+            <Input id="name" {...register("name")} placeholder="Enter customer name" />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
@@ -87,7 +98,7 @@ export function CustomerForm({ mode, initialData }: CustomerFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="phone">Phone Number</Label>
-            <Input id="phone" {...register("phone")} />
+            <Input id="phone" {...register("phone")} placeholder="Enter phone number" />
             {errors.phone && (
               <p className="text-sm text-destructive">{errors.phone.message}</p>
             )}
@@ -95,7 +106,7 @@ export function CustomerForm({ mode, initialData }: CustomerFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="address">Address</Label>
-            <Input id="address" {...register("address")} />
+            <Input id="address" {...register("address")} placeholder="Enter address (optional)" />
             {errors.address && (
               <p className="text-sm text-destructive">
                 {errors.address.message}
@@ -112,7 +123,14 @@ export function CustomerForm({ mode, initialData }: CustomerFormProps) {
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : isEdit ? "Update" : "Create"}
+              {isSubmitting ? (
+                "Saving..."
+              ) : (
+                <>
+                  <Save className="size-4" />
+                  {isEdit ? "Update" : "Create"}
+                </>
+              )}
             </Button>
           </div>
         </form>

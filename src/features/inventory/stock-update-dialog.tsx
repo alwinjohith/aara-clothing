@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Save } from "lucide-react";
 
 interface Variant {
   id: string;
@@ -90,14 +91,14 @@ export function StockUpdateDialog({
           <DialogTitle>Update Stock</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="rounded-md bg-muted p-3 text-sm">
-            <div className="font-medium">{variant.product.name}</div>
+        <div className="space-y-5">
+          <div className="rounded-lg bg-muted/30 border border-border p-4 text-sm">
+            <div className="font-medium text-foreground">{variant.product.name}</div>
             <div className="text-muted-foreground">
-              {variant.color} / {variant.size} / {variant.sku}
+              {variant.color} / {variant.size} / <span className="font-mono text-xs">{variant.sku}</span>
             </div>
-            <div className="mt-1 text-muted-foreground">
-              Current stock: <span className="font-medium">{variant.stock}</span>
+            <div className="mt-2 text-muted-foreground">
+              Current stock: <span className="font-semibold text-foreground">{variant.stock}</span>
             </div>
           </div>
 
@@ -143,14 +144,21 @@ export function StockUpdateDialog({
               )}
               {mode === "adjust" && (
                 <p className="text-xs text-muted-foreground">
-                  Resulting stock: {currentStock}
+                  Resulting stock: <span className="font-medium">{currentStock}</span>
                 </p>
               )}
             </div>
 
             <DialogFooter>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Update Stock"}
+                {isSubmitting ? (
+                  "Saving..."
+                ) : (
+                  <>
+                    <Save className="size-4" />
+                    Update Stock
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </form>

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+<<<<<<< HEAD
 import Link from "next/link";
 import { listProducts } from "@/features/inventory/inventory-service";
 import { productQuerySchema } from "@/features/inventory/inventory-validation";
@@ -6,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ProductTable } from "@/features/inventory/product-table";
 import type { Product } from "@/types";
+=======
+import { listInventory } from "@/features/inventory/inventory-service";
+import { inventoryQuerySchema } from "@/features/inventory/inventory-validation";
+import { InventoryTable } from "@/features/inventory/inventory-table";
+import { Boxes } from "lucide-react";
+>>>>>>> f2172a4 (added settings)
 
 interface ProductRow {
   id: string;
@@ -38,6 +45,7 @@ export default async function InventoryPage({ searchParams }: Props) {
   }));
 
   return (
+<<<<<<< HEAD
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -57,6 +65,21 @@ export default async function InventoryPage({ searchParams }: Props) {
             </Button>
           </Link>
         </div>
+=======
+    <div className="space-y-6 p-8">
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 items-center justify-center rounded-xl gradient-accent">
+          <Boxes className="size-5 text-white" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Inventory
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Manage stock levels for all product variants
+          </p>
+        </div>
+>>>>>>> f2172a4 (added settings)
       </div>
 
       <Suspense fallback={<div>Loading...</div>}>

@@ -5,6 +5,7 @@ export const ROUTES = {
   INVENTORY: "/dashboard/inventory",
   CUSTOMERS: "/dashboard/customers",
   SETTINGS: "/dashboard/settings",
+  ORDERS: "/dashboard/orders",
 } as const;
 
 export const APP_NAME = "Aara Clothing";

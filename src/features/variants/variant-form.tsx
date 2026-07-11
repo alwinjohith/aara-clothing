@@ -54,8 +54,13 @@ export function VariantForm({ productId, onVariantCreated }: VariantFormProps) {
   }
 
   return (
+<<<<<<< HEAD
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 rounded-lg border p-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+=======
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-lg border border-border bg-muted/20 p-4">
+      <div className="grid grid-cols-2 gap-4">
+>>>>>>> f2172a4 (added settings)
         <div className="space-y-2">
           <Label htmlFor="color">Color</Label>
           <Input id="color" placeholder="e.g. Black" {...register("color")} />

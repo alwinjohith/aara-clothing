@@ -49,8 +49,13 @@ export function ProductTable({ data, page, totalPages, search }: Props) {
       header: "Name",
       cell: (item) => (
         <Link
+<<<<<<< HEAD:src/features/inventory/product-table.tsx
           href={`/dashboard/inventory/${item.id}`}
           className="font-medium hover:underline"
+=======
+          href={`/dashboard/products/${item.id}`}
+          className="font-medium text-foreground transition-colors hover:text-primary"
+>>>>>>> f2172a4 (added settings):src/features/products/products-table.tsx
         >
           {item.name}
         </Link>
@@ -80,8 +85,13 @@ export function ProductTable({ data, page, totalPages, search }: Props) {
       key: "actions",
       header: "Actions",
       cell: (item) => (
+<<<<<<< HEAD:src/features/inventory/product-table.tsx
         <div className="flex gap-2">
           <Link href={`/dashboard/inventory/${item.id}`}>
+=======
+        <div className="flex gap-1">
+          <Link href={`/dashboard/products/${item.id}`}>
+>>>>>>> f2172a4 (added settings):src/features/products/products-table.tsx
             <Button variant="ghost" size="icon-sm">
               <Pencil className="size-4" />
             </Button>

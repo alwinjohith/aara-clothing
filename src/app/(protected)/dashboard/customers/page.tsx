@@ -4,7 +4,7 @@ import { listCustomers } from "@/features/customers/customers-service";
 import { customerQuerySchema } from "@/features/customers/customers-validation";
 import { CustomersTable } from "@/features/customers/customers-table";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 
 export default async function CustomersPage({
   searchParams,
@@ -21,6 +21,7 @@ export default async function CustomersPage({
   const result = await listCustomers(query);
 
   return (
+<<<<<<< HEAD
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -28,10 +29,26 @@ export default async function CustomersPage({
           <p className="text-sm text-muted-foreground">
             Manage your customer database
           </p>
+=======
+    <div className="space-y-6 p-8">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-xl gradient-accent">
+            <Users className="size-5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              Customers
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Manage your customer database
+            </p>
+          </div>
+>>>>>>> f2172a4 (added settings)
         </div>
         <Link href="/dashboard/customers/new">
           <Button>
-            <Plus className="size-4 mr-2" />
+            <Plus className="size-4" />
             Add Customer
           </Button>
         </Link>

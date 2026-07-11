@@ -53,6 +53,7 @@
 }
 
 :root {
+<<<<<<< HEAD
   --background: oklch(0.97 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -134,6 +135,40 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+=======
+  --background: oklch(0.08 0.02 170);
+  --foreground: oklch(0.95 0.01 170);
+  --card: oklch(0.12 0.02 170);
+  --card-foreground: oklch(0.95 0.01 170);
+  --popover: oklch(0.12 0.02 170);
+  --popover-foreground: oklch(0.95 0.01 170);
+  --primary: oklch(0.45 0.10 165);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.55 0.10 165);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.15 0.02 170);
+  --muted-foreground: oklch(0.65 0.02 170);
+  --accent: oklch(0.55 0.10 165);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.65 0.20 25);
+  --border: oklch(0.22 0.02 170);
+  --input: oklch(0.22 0.02 170);
+  --ring: oklch(0.55 0.10 165);
+  --chart-1: oklch(0.75 0.12 165);
+  --chart-2: oklch(0.55 0.10 165);
+  --chart-3: oklch(0.45 0.10 165);
+  --chart-4: oklch(0.65 0.08 165);
+  --chart-5: oklch(0.35 0.08 165);
+  --radius: 0.75rem;
+  --sidebar: oklch(0.06 0.02 170);
+  --sidebar-foreground: oklch(0.95 0.01 170);
+  --sidebar-primary: oklch(0.55 0.10 165);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.15 0.02 170);
+  --sidebar-accent-foreground: oklch(0.95 0.01 170);
+  --sidebar-border: oklch(0.22 0.02 170);
+  --sidebar-ring: oklch(0.55 0.10 165);
+>>>>>>> f2172a4 (added settings)
 }
 
 @layer base {
@@ -148,6 +183,7 @@
   }
 }
 
+<<<<<<< HEAD
 /* Sidebar transitions */
 @keyframes sidebar-slide-in {
   from { transform: translateX(-100%); }
@@ -183,4 +219,77 @@
 
 .overlay-close {
   animation: overlay-fade-out 200ms ease-in forwards;
+=======
+@layer utilities {
+  .shadow-card {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  }
+  .shadow-card-hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  }
+  .shadow-elevated {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  }
+  .shadow-glow {
+    box-shadow: 0 0 20px rgb(64 138 113 / 0.15);
+  }
+  .transition-smooth {
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .pin-stripe {
+    background-image: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 10px,
+      oklch(0.15 0.02 170 / 0.3) 10px,
+      oklch(0.15 0.02 170 / 0.3) 11px
+    );
+  }
+  .pin-stripe-vertical {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 10px,
+      oklch(0.15 0.02 170 / 0.3) 10px,
+      oklch(0.15 0.02 170 / 0.3) 11px
+    );
+  }
+  .gradient-accent {
+    background: linear-gradient(135deg, oklch(0.45 0.10 165) 0%, oklch(0.55 0.10 165) 100%);
+  }
+  .gradient-subtle {
+    background: linear-gradient(180deg, oklch(0.12 0.02 170) 0%, oklch(0.08 0.02 170) 100%);
+  }
+}
+
+@layer base {
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+>>>>>>> f2172a4 (added settings)
 }

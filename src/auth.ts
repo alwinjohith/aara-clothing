@@ -44,7 +44,7 @@ export const {
 
         return {
           id: user.id,
-          name: user.username,
+          name: user.name,
           username: user.username,
         };
       },
@@ -55,6 +55,7 @@ export const {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.name = user.name;
         token.username = (user as { username: string }).username;
       }
       return token;
@@ -62,6 +63,7 @@ export const {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.name = token.name as string | null;
         (session.user as { username: string }).username = token.username as string;
       }
       return session;

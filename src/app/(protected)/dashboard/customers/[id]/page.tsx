@@ -26,6 +26,7 @@ export default async function CustomerProfilePage({ params }: Props) {
   });
 
   return (
+<<<<<<< HEAD
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -47,6 +48,14 @@ export default async function CustomerProfilePage({ params }: Props) {
             </Button>
           </Link>
         </div>
+=======
+    <div className="p-8">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          Edit Customer
+        </h1>
+        <p className="mt-1 text-muted-foreground">Update customer information</p>
+>>>>>>> f2172a4 (added settings)
       </div>
 
       {/* Section 1 — Customer Information */}

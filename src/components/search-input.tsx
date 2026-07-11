@@ -35,12 +35,12 @@ export function SearchInput({
 
   return (
     <div className={cn("relative", className)}>
-      <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+      <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         value={local}
         onChange={(e) => setLocal(e.target.value)}
         placeholder={placeholder}
-        className="pl-8"
+        className="pl-10"
       />
     </div>
   );

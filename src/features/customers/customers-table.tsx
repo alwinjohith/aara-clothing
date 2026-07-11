@@ -55,7 +55,7 @@ export function CustomersTable({ data, page, totalPages, search }: Props) {
       cell: (item) => (
         <Link
           href={`/dashboard/customers/${item.id}`}
-          className="font-medium hover:underline"
+          className="font-medium text-foreground transition-colors hover:text-primary"
         >
           {item.name}
         </Link>
@@ -101,7 +101,7 @@ export function CustomersTable({ data, page, totalPages, search }: Props) {
       key: "actions",
       header: "Actions",
       cell: (item) => (
-        <div className="flex gap-2">
+        <div className="flex gap-1">
           <Link href={`/dashboard/customers/${item.id}`}>
             <Button variant="ghost" size="icon-sm">
               <Pencil className="size-4" />

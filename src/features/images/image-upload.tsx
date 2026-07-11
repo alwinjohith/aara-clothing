@@ -66,7 +66,7 @@ export function ImageUpload({ variantId, images, onImageChange }: ImageUploadPro
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
         {images.map((image) => (
-          <div key={image.id} className="group relative size-20 overflow-hidden rounded-md border">
+          <div key={image.id} className="group relative size-20 overflow-hidden rounded-lg border border-border transition-all duration-200 hover:shadow-card-hover">
             <img
               src={image.url}
               alt="Variant"
@@ -75,7 +75,7 @@ export function ImageUpload({ variantId, images, onImageChange }: ImageUploadPro
             <button
               type="button"
               onClick={() => handleDelete(image.id)}
-              className="absolute right-0.5 top-0.5 hidden rounded-full bg-black/60 p-0.5 text-white group-hover:block"
+              className="absolute right-1 top-1 hidden rounded-full bg-black/60 p-1 text-white transition-all duration-150 group-hover:block hover:bg-black/80"
             >
               <X className="size-3" />
             </button>
@@ -83,8 +83,8 @@ export function ImageUpload({ variantId, images, onImageChange }: ImageUploadPro
         ))}
         <label
           className={cn(
-            "flex size-20 cursor-pointer items-center justify-center rounded-md border border-dashed text-muted-foreground hover:border-foreground hover:text-foreground",
-            uploading && "opacity-50"
+            "flex size-20 cursor-pointer items-center justify-center rounded-lg border border-dashed border-border text-muted-foreground transition-all duration-150 hover:border-primary hover:text-primary",
+            uploading && "opacity-50 cursor-not-allowed"
           )}
         >
           <input

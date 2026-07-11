@@ -64,7 +64,7 @@ export function InventoryTable({ data, page, totalPages, search }: Props) {
       key: "sku",
       header: "SKU",
       cell: (item) => (
-        <span className="font-mono text-xs">{item.sku}</span>
+        <span className="font-mono text-xs text-muted-foreground">{item.sku}</span>
       ),
     },
     {

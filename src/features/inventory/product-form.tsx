@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VariantForm } from "@/features/variants/variant-form";
 import { ImageUpload } from "@/features/images/image-upload";
+import { ArrowLeft, Save } from "lucide-react";
 import type { Product, ProductVariant } from "@/types";
 
 interface ProductFormProps {
@@ -68,15 +69,29 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => router.back()}
+        >
+          <ArrowLeft className="size-4" />
+        </Button>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {isEdit ? "Edit Product" : "Create Product"}
+        </h1>
+      </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>{isEdit ? "Edit Product" : "Create Product"}</CardTitle>
+          <CardTitle>Product Details</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" {...register("name")} />
+              <Input id="name" {...register("name")} placeholder="Enter product name" />
               {errors.name && (
                 <p className="text-sm text-destructive">{errors.name.message}</p>
               )}
@@ -84,13 +99,14 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" rows={3} {...register("description")} />
+              <Textarea id="description" rows={3} {...register("description")} placeholder="Enter product description" />
               {errors.description && (
                 <p className="text-sm text-destructive">{errors.description.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
+<<<<<<< HEAD:src/features/inventory/product-form.tsx
               <Label htmlFor="price">Price</Label>
               <Input
                 id="price"
@@ -101,10 +117,30 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
               />
               {errors.price && (
                 <p className="text-sm text-destructive">{errors.price.message}</p>
+=======
+              <Label htmlFor="categoryId">Category</Label>
+              <select
+                id="categoryId"
+                value={initialData?.categoryId ?? ""}
+                onChange={(e) => setValue("categoryId", e.target.value)}
+                className="flex h-10 w-full appearance-none rounded-lg border border-input bg-muted/30 px-3 py-2 pr-8 text-sm shadow-sm transition-all duration-150 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="" disabled>
+                  Select a category
+                </option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+              {errors.categoryId && (
+                <p className="text-sm text-destructive">{errors.categoryId.message}</p>
+>>>>>>> f2172a4 (added settings):src/features/products/product-form.tsx
               )}
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <input
                 type="checkbox"
                 id="isActive"
@@ -120,7 +156,14 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : isEdit ? "Update" : "Create"}
+                {isSubmitting ? (
+                  "Saving..."
+                ) : (
+                  <>
+                    <Save className="size-4" />
+                    {isEdit ? "Update" : "Create"}
+                  </>
+                )}
               </Button>
             </div>
           </form>
@@ -144,24 +187,24 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
                   {variants.map((variant: ProductVariant) => (
                     <div
                       key={variant.id}
-                      className="rounded-lg border p-4"
+                      className="rounded-lg border border-border bg-muted/20 p-4 transition-colors hover:bg-muted/30"
                     >
                       <div className="mb-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
                         <div>
                           <span className="text-muted-foreground">Color:</span>{" "}
-                          {variant.color}
+                          <span className="font-medium">{variant.color}</span>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Size:</span>{" "}
-                          {variant.size}
+                          <span className="font-medium">{variant.size}</span>
                         </div>
                         <div>
                           <span className="text-muted-foreground">SKU:</span>{" "}
-                          {variant.sku}
+                          <span className="font-medium font-mono text-xs">{variant.sku}</span>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Stock:</span>{" "}
-                          {variant.stock}
+                          <span className="font-medium">{variant.stock}</span>
                         </div>
                       </div>
 

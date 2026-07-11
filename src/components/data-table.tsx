@@ -28,22 +28,22 @@ export function DataTable<T>({
   actions,
 }: DataTableProps<T>) {
   return (
-    <Card className="w-full min-w-0 border-border">
+    <Card className="overflow-hidden">
       {(title || actions) && (
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-border bg-muted/20">
           {title && <CardTitle>{title}</CardTitle>}
           {actions}
         </CardHeader>
       )}
-      <CardContent>
+      <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border text-left">
+              <tr className="sticky top-0 border-b border-border bg-muted/30 backdrop-blur-sm">
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className={`px-4 py-3 font-medium text-muted-foreground ${col.className ?? ""}`}
+                    className={`px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground ${col.className ?? ""}`}
                   >
                     {col.header}
                   </th>
@@ -55,7 +55,7 @@ export function DataTable<T>({
                 <tr>
                   <td
                     colSpan={columns.length}
-                    className="px-4 py-12 text-center text-muted-foreground"
+                    className="px-4 py-16 text-center text-muted-foreground"
                   >
                     Loading...
                   </td>
@@ -64,21 +64,23 @@ export function DataTable<T>({
                 <tr>
                   <td
                     colSpan={columns.length}
-                    className="px-4 py-12 text-center text-muted-foreground"
+                    className="px-4 py-16 text-center text-muted-foreground"
                   >
                     {emptyMessage}
                   </td>
                 </tr>
               ) : (
-                data.map((item) => (
+                data.map((item, index) => (
                   <tr
                     key={keyExtractor(item)}
-                    className="border-b border-border last:border-0 transition-colors duration-150 hover:bg-muted/50"
+                    className={`border-b border-border last:border-0 transition-colors duration-150 hover:bg-muted/20 ${
+                      index % 2 === 1 ? "bg-muted/10" : ""
+                    }`}
                   >
                     {columns.map((col) => (
                       <td
                         key={col.key}
-                        className={`px-4 py-3 ${col.className ?? ""}`}
+                        className={`px-4 py-3.5 ${col.className ?? ""}`}
                       >
                         {col.cell
                           ? col.cell(item)
