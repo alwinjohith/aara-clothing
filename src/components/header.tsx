@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import { Card } from "@/components/ui/card";
 import { Search, Bell, User } from "lucide-react";
 
@@ -18,10 +17,7 @@ function getFormattedDate() {
   });
 }
 
-export async function Header() {
-  const session = await auth();
-  const username = session?.user?.username ?? "User";
-
+export function Header({ username }: { username: string }) {
   return (
     <div className="mb-6 grid gap-4 sm:grid-cols-2">
       {/* Greeting Card */}

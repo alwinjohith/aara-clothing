@@ -57,7 +57,6 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
       }
 
       router.push("/dashboard/inventory");
-      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message);

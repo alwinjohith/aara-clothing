@@ -1,15 +1,7 @@
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
 import { getDashboardStats } from "@/features/dashboard/dashboard-service";
 import { DashboardWidgets } from "@/features/dashboard/dashboard-widgets";
 
 export default async function DashboardPage() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/login");
-  }
-
   const stats = await getDashboardStats();
 
   return (

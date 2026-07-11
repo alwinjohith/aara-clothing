@@ -63,7 +63,6 @@ export function CustomerForm({ mode, initialData }: CustomerFormProps) {
         isEdit ? "Customer updated successfully" : "Customer created successfully"
       );
       router.push("/dashboard/customers");
-      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

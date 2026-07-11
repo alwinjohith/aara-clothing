@@ -207,7 +207,6 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
         mode === "create" ? "Order created successfully" : "Order updated successfully"
       );
       router.push(`/dashboard/customers/${customerId}`);
-      router.refresh();
     } catch (error) {
       if (error instanceof Error) toast.error(error.message);
     } finally {
