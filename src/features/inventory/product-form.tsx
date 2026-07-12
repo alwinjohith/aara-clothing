@@ -69,7 +69,7 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
   const variants = initialData?.variants ?? [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
       <div className="flex items-center gap-4">
         <Button
           type="button"
@@ -79,7 +79,7 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
         >
           <ArrowLeft className="size-4" />
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">
+        <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
           {isEdit ? "Edit Product" : "Create Product"}
         </h1>
       </div>
@@ -131,11 +131,11 @@ export function ProductForm({ mode, initialData }: ProductFormProps) {
               <Label htmlFor="isActive">Active</Label>
             </div>
 
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Button type="button" variant="outline" onClick={() => router.back()}>
+            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap">
+              <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
                 {isSubmitting ? (
                   "Saving..."
                 ) : (

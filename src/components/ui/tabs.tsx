@@ -64,6 +64,7 @@ function TabsList({ className, children }: TabsListProps) {
       ref={scrollRef}
       className={cn(
         "flex lg:flex-col lg:w-56 shrink-0 gap-1 overflow-x-auto scrollbar-none pb-2 lg:pb-0 lg:pt-0",
+        "-mx-4 px-4 sm:mx-0 sm:px-0",
         className
       )}
       role="tablist"

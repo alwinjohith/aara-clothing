@@ -109,7 +109,7 @@ export function SecuritySection() {
                 </p>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <Button
                 type="button"
                 variant="outline"
@@ -118,10 +118,11 @@ export function SecuritySection() {
                   setIsChangingPassword(false);
                   passwordForm.reset();
                 }}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
-              <Button type="submit" size="sm" disabled={passwordForm.formState.isSubmitting}>
+              <Button type="submit" size="sm" disabled={passwordForm.formState.isSubmitting} className="w-full sm:w-auto">
                 {passwordForm.formState.isSubmitting ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (

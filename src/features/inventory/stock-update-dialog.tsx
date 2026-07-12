@@ -87,7 +87,7 @@ export function StockUpdateDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Update Stock</DialogTitle>
         </DialogHeader>
@@ -103,7 +103,7 @@ export function StockUpdateDialog({
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               type="button"
               variant={mode === "set" ? "default" : "outline"}
@@ -151,7 +151,7 @@ export function StockUpdateDialog({
             </div>
 
             <DialogFooter>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
                 {isSubmitting ? (
                   "Saving..."
                 ) : (

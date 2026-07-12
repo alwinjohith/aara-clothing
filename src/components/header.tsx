@@ -19,13 +19,13 @@ function getFormattedDate() {
 
 export function Header({ username }: { username: string }) {
   return (
-    <div className="relative mb-8 overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-[var(--aara-secondary)] to-[var(--aara-accent)] p-8 shadow-lg shadow-aara-secondary/10">
-      <div className="relative z-10 flex items-start justify-between">
-        <div className="space-y-1.5">
-          <h1 className="text-3xl font-semibold tracking-tight text-white">
+    <div className="relative mb-6 overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-[var(--aara-secondary)] to-[var(--aara-accent)] p-4 shadow-lg shadow-aara-secondary/10 sm:mb-8 sm:p-8">
+      <div className="relative z-10 flex items-start justify-between gap-3">
+        <div className="space-y-1.5 min-w-0">
+          <h1 className="text-xl font-semibold tracking-tight text-white sm:text-3xl">
             {getGreeting()}, <span className="font-bold">{username}</span>
           </h1>
-          <p className="text-sm text-white/60">
+          <p className="text-xs text-white/60 sm:text-sm">
             {getFormattedDate()}
           </p>
         </div>

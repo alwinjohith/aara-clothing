@@ -25,11 +25,11 @@ export default async function OrderDetailPage({ params }: Props) {
   const allowedTransitions = ORDER_STATUS_FLOW[order.status as keyof typeof ORDER_STATUS_FLOW] ?? [];
 
   return (
-    <div className="relative space-y-6">
+    <div className="relative space-y-4 sm:space-y-6">
       <div className="pointer-events-none absolute -top-24 -right-24 -z-10 size-56 rounded-full bg-aara-accent/8 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 -left-24 -z-10 size-40 rounded-full bg-aara-highlight/8 blur-3xl" />
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-8 pt-8">
+      <div className="flex flex-col gap-3 px-4 pt-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-8 sm:pt-8">
         <div className="flex items-center gap-4">
           <Link
             href={`/dashboard/customers/${customerId}`}
@@ -37,22 +37,22 @@ export default async function OrderDetailPage({ params }: Props) {
           >
             <ArrowLeft className="size-5" />
           </Link>
-          <div>
-            <h2 className="text-xl font-semibold tracking-tight">
+          <div className="min-w-0">
+            <h2 className="text-lg font-semibold tracking-tight sm:text-xl">
               Order #{order.orderNumber}
             </h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground sm:text-sm">
               {customer.name} — {customer.phone}
             </p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={ORDER_STATUS_VARIANT[order.status as keyof typeof ORDER_STATUS_VARIANT] ?? "secondary"} className="text-sm px-3 py-1">
+          <Badge variant={ORDER_STATUS_VARIANT[order.status as keyof typeof ORDER_STATUS_VARIANT] ?? "secondary"} className="text-xs sm:text-sm px-2 py-0.5 sm:px-3 sm:py-1">
             {ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS] ?? order.status}
           </Badge>
           {(order.status as string) === "NOT_STARTED" && (
-            <Link href={`/dashboard/customers/${customerId}/orders/${orderId}/edit`}>
-              <Button variant="outline" size="sm">
+            <Link href={`/dashboard/customers/${customerId}/orders/${orderId}/edit`} className="flex-1 sm:flex-none">
+              <Button variant="outline" size="sm" className="w-full sm:w-auto">
                 <Pencil className="size-4" />
                 Edit
               </Button>
@@ -62,12 +62,26 @@ export default async function OrderDetailPage({ params }: Props) {
       </div>
 
       {/* Order Items */}
-      <Card className="mx-8">
+      <Card className="mx-4 sm:mx-8">
         <CardHeader>
           <CardTitle>Order Items</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
+        <CardContent className="p-0 sm:p-6 sm:pt-0">
+          {/* Mobile: Card view */}
+          <div className="md:hidden divide-y divide-border/30">
+            {order.items.map((item) => (
+              <div key={item.id} className="px-4 py-3">
+                <p className="font-medium">{item.variant.product.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {item.variant.color} / {item.variant.size}
+                </p>
+                <p className="font-mono text-[10px] text-muted-foreground">{item.variant.sku}</p>
+                <p className="mt-1 text-sm font-medium">Qty: {item.quantity}</p>
+              </div>
+            ))}
+          </div>
+          {/* Desktop: Table view */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="sticky top-0 border-b border-border/50 bg-muted/20 backdrop-blur-sm">
@@ -99,7 +113,7 @@ export default async function OrderDetailPage({ params }: Props) {
       </Card>
 
       {/* Order Info */}
-      <div className="grid gap-4 px-8 pb-8 sm:grid-cols-2">
+      <div className="grid gap-4 px-4 pb-8 sm:px-8 sm:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Order Details</CardTitle>

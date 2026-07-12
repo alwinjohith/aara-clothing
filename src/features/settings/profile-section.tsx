@@ -123,7 +123,7 @@ export function ProfileSection({ name, username }: ProfileSectionProps) {
                   </p>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <Button
                   type="button"
                   variant="outline"
@@ -132,10 +132,11 @@ export function ProfileSection({ name, username }: ProfileSectionProps) {
                     setIsEditingName(false);
                     nameForm.reset({ name: name ?? "" });
                   }}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>
-                <Button type="submit" size="sm" disabled={nameForm.formState.isSubmitting}>
+                <Button type="submit" size="sm" disabled={nameForm.formState.isSubmitting} className="w-full sm:w-auto">
                   {nameForm.formState.isSubmitting ? (
                     <Loader2 className="size-4 animate-spin" />
                   ) : (
@@ -148,13 +149,14 @@ export function ProfileSection({ name, username }: ProfileSectionProps) {
           ) : (
             <div className="space-y-2">
               <Label>Full Name</Label>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <Input value={name ?? "Not set"} disabled className="opacity-60" />
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setIsEditingName(true)}
+                  className="w-full sm:w-auto"
                 >
                   Edit
                 </Button>
@@ -209,7 +211,7 @@ export function ProfileSection({ name, username }: ProfileSectionProps) {
                   </p>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <Button
                   type="button"
                   variant="outline"
@@ -218,10 +220,11 @@ export function ProfileSection({ name, username }: ProfileSectionProps) {
                     setIsChangingPassword(false);
                     passwordForm.reset();
                   }}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>
-                <Button type="submit" size="sm" disabled={passwordForm.formState.isSubmitting}>
+                <Button type="submit" size="sm" disabled={passwordForm.formState.isSubmitting} className="w-full sm:w-auto">
                   {passwordForm.formState.isSubmitting ? (
                     <Loader2 className="size-4 animate-spin" />
                   ) : (

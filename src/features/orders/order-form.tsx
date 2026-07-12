@@ -316,7 +316,43 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
             {items.length > 0 && (
               <div className="mt-6 space-y-2">
                 <Label>Order Items</Label>
-                <div className="overflow-x-auto rounded-md border">
+                {/* Mobile: Card view */}
+                <div className="md:hidden space-y-2">
+                  {items.map((item) => (
+                    <div key={item.variantId} className="rounded-lg border border-border bg-muted/20 p-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm truncate">{item.productName}</p>
+                          <p className="text-xs text-muted-foreground truncate">{item.variantLabel}</p>
+                          <p className="text-xs text-muted-foreground">Stock: {item.stock}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={() => handleRemoveItem(item.variantId)}
+                          className="shrink-0"
+                        >
+                          <Trash2 className="size-4 text-destructive" />
+                        </Button>
+                      </div>
+                      <div className="mt-2 flex items-center gap-2">
+                        <Label className="text-xs text-muted-foreground">Qty:</Label>
+                        <Input
+                          type="number"
+                          min={1}
+                          max={item.stock}
+                          value={item.quantity}
+                          onChange={(e) =>
+                            handleQuantityChange(item.variantId, Number(e.target.value))
+                          }
+                          className="h-11 w-20 text-center"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Desktop: Table view */}
+                <div className="hidden md:block overflow-x-auto rounded-md border">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b text-left">
@@ -341,7 +377,7 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
                               onChange={(e) =>
                                 handleQuantityChange(item.variantId, Number(e.target.value))
                               }
-                              className="h-8 w-20 text-center"
+                              className="h-11 w-20 text-center"
                             />
                           </td>
                           <td className="px-4 py-2 text-center">{item.stock}</td>
@@ -391,11 +427,12 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
               </div>
             )}
 
-            <div className="flex flex-wrap gap-3 pt-4">
+            <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:flex-wrap">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
@@ -403,6 +440,7 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting || items.length === 0}
+                className="w-full sm:w-auto"
               >
                 <Save className="size-4" />
                 {isSubmitting

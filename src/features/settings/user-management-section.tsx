@@ -151,23 +151,24 @@ export function UserManagementSection() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-aara-primary/10">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-aara-primary/10">
               <Users className="size-5 text-aara-primary" />
             </div>
-            <div>
-              <CardTitle>User Management</CardTitle>
-              <CardDescription>Manage employee accounts</CardDescription>
+            <div className="min-w-0">
+              <CardTitle className="truncate">User Management</CardTitle>
+              <CardDescription className="truncate">Manage employee accounts</CardDescription>
             </div>
           </div>
           {!isAddingUser && !editingUser && (
             <Button
               size="sm"
               onClick={() => setIsAddingUser(true)}
+              className="shrink-0"
             >
               <Plus className="size-4" />
-              Add User
+              <span className="hidden sm:inline">Add User</span>
             </Button>
           )}
         </div>
@@ -322,7 +323,7 @@ export function UserManagementSection() {
                   )}
                 </div>
               </div>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-4">
                 <label className="flex items-center gap-2 text-sm">
                   <input
                     type="checkbox"
@@ -368,7 +369,8 @@ export function UserManagementSection() {
           </div>
         )}
 
-        <div className="rounded-xl border border-border/50 overflow-hidden">
+        {/* Desktop: Table view */}
+        <div className="hidden md:block rounded-xl border border-border/50 overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border/50 bg-muted/30">
@@ -461,6 +463,63 @@ export function UserManagementSection() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile: Card view */}
+        <div className="md:hidden space-y-3">
+          {users.length === 0 ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">No users found</p>
+          ) : (
+            users.map((user) => (
+              <div
+                key={user.id}
+                className="rounded-xl border border-border/50 bg-muted/20 p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium truncate">{user.name ?? "Not set"}</p>
+                    <p className="text-sm text-muted-foreground truncate">{user.username}</p>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
+                          user.isActive
+                            ? "bg-green-500/10 text-green-600 dark:text-green-400"
+                            : "bg-red-500/10 text-red-600 dark:text-red-400"
+                        )}
+                      >
+                        {user.isActive ? <Check className="size-3" /> : <UserX className="size-3" />}
+                        {user.isActive ? "Active" : "Disabled"}
+                      </span>
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
+                          user.isAdmin
+                            ? "bg-aara-primary/10 text-aara-primary"
+                            : "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        {user.isAdmin && <Shield className="size-3" />}
+                        {user.isAdmin ? "Admin" : "User"}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => startEditing(user)}
+                    disabled={editingUser?.id === user.id}
+                    className="shrink-0"
+                  >
+                    <Pencil className="size-4" />
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </CardContent>
     </Card>

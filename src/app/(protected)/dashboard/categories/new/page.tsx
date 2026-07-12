@@ -5,7 +5,7 @@ export default async function NewCategoryPage() {
   const categories = await getCategoryTree();
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <CategoryForm mode="create" categories={categories} />
     </div>
   );

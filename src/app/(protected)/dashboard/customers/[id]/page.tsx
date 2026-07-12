@@ -27,31 +27,31 @@ export default async function CustomerProfilePage({ params }: Props) {
   ]);
 
   return (
-    <div className="relative space-y-6 p-8">
+    <div className="relative space-y-4 p-4 sm:space-y-6 sm:p-8">
       <div className="pointer-events-none absolute -top-24 -right-24 -z-10 size-56 rounded-full bg-aara-accent/8 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 -left-24 -z-10 size-40 rounded-full bg-aara-highlight/8 blur-3xl" />
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-aara-primary/10">
             <ShoppingBag className="size-5 text-aara-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">{customer.name}</h1>
-            <p className="text-sm text-muted-foreground">Customer Profile</p>
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">{customer.name}</h1>
+            <p className="text-xs text-muted-foreground sm:text-sm">Customer Profile</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href={`/dashboard/customers/${id}/edit`}>
-            <Button variant="outline" size="sm">
+          <Link href={`/dashboard/customers/${id}/edit`} className="flex-1 sm:flex-none">
+            <Button variant="outline" size="sm" className="w-full sm:w-auto">
               <Pencil className="size-4" />
               Edit
             </Button>
           </Link>
-          <Link href={`/dashboard/customers/${id}/orders/new`}>
-            <Button size="sm">
+          <Link href={`/dashboard/customers/${id}/orders/new`} className="flex-1 sm:flex-none">
+            <Button size="sm" className="w-full sm:w-auto">
               <Plus className="size-4" />
-              Create New Order
+              New Order
             </Button>
           </Link>
         </div>

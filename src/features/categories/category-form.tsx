@@ -112,7 +112,7 @@ export function CategoryForm({
               onChange={(e) =>
                 setValue("parentId", e.target.value || null)
               }
-              className="flex h-10 w-full appearance-none rounded-lg border border-input bg-muted/30 px-3 py-2 pr-8 text-sm shadow-sm transition-all duration-150 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-11 w-full appearance-none rounded-lg border border-input bg-muted/30 px-3 py-2 pr-8 text-sm shadow-sm transition-all duration-150 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50"
             >
               <option value="">None (top-level)</option>
               {parentOptions.map((opt) => (
@@ -126,11 +126,11 @@ export function CategoryForm({
             )}
           </div>
 
-          <div className="flex gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={() => router.back()}>
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+            <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
               {isSubmitting ? (
                 "Saving..."
               ) : (

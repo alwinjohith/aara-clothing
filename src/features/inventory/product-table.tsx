@@ -8,7 +8,8 @@ import { Pagination } from "@/components/pagination";
 import { SearchInput } from "@/components/search-input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Pencil, Trash2, Package } from "lucide-react";
 import type { Column } from "@/components/data-table";
 
 interface ProductRow {
@@ -99,8 +100,40 @@ export function ProductTable({ data, page, totalPages, search }: Props) {
     },
   ];
 
+  if (data.length === 0 && !search) {
+    return (
+      <div className="space-y-4">
+        <SearchInput
+          value={search}
+          onChange={(val) => {
+            const url = new URL(window.location.href);
+            url.searchParams.set("search", val);
+            url.searchParams.delete("page");
+            router.push(url.pathname + url.search);
+          }}
+          placeholder="Search products..."
+        />
+        <Card className="flex flex-col items-center justify-center rounded-2xl border-border/50 py-12">
+          <div className="mb-3 flex size-12 items-center justify-center rounded-2xl bg-muted/50">
+            <Package className="size-6 text-muted-foreground/60" />
+          </div>
+          <p className="text-sm font-medium text-foreground">No products yet</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Add your first product to get started
+          </p>
+          <Link href="/dashboard/inventory/new" className="mt-4">
+            <Button size="sm">
+              <Pencil className="size-4" />
+              Add Product
+            </Button>
+          </Link>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full space-y-4">
+    <div className="space-y-4">
       <SearchInput
         value={search}
         onChange={(val) => {
@@ -111,12 +144,57 @@ export function ProductTable({ data, page, totalPages, search }: Props) {
         }}
         placeholder="Search products..."
       />
-      <DataTable
-        columns={columns}
-        data={data}
-        keyExtractor={(item) => item.id}
-        emptyMessage="No products found"
-      />
+
+      {/* Mobile card view */}
+      <div className="space-y-2 md:hidden">
+        {data.map((item) => (
+          <Card key={item.id} className="rounded-xl border-border/50 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <Link
+                  href={`/dashboard/inventory/${item.id}`}
+                  className="text-sm font-medium text-foreground transition-colors hover:text-primary"
+                >
+                  {item.name}
+                </Link>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <span className="text-xs text-muted-foreground">
+                    {item.variantCount} {item.variantCount === 1 ? "variant" : "variants"}
+                  </span>
+                  <Badge variant={item.isActive ? "success" : "secondary"} className="text-[10px]">
+                    {item.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                </div>
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <Link href={`/dashboard/inventory/${item.id}`}>
+                  <Button variant="ghost" size="icon-sm">
+                    <Pencil className="size-4" />
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => handleDelete(item.id)}
+                >
+                  <Trash2 className="size-4 text-destructive" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block">
+        <DataTable
+          columns={columns}
+          data={data}
+          keyExtractor={(item) => item.id}
+          emptyMessage="No products found"
+        />
+      </div>
+
       <Pagination
         page={page}
         totalPages={totalPages}

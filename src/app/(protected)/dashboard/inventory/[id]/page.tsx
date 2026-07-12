@@ -13,10 +13,6 @@ export default async function EditProductPage({ params }: Props) {
 
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold tracking-tight">Edit Product</h2>
-        <p className="text-sm text-muted-foreground">Update product information</p>
-      </div>
       <ProductForm mode="edit" initialData={product} />
     </div>
   );

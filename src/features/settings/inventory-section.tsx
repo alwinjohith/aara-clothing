@@ -69,11 +69,11 @@ export function InventorySection() {
                 id="threshold"
                 type="number"
                 {...register("threshold", { valueAsNumber: true })}
-                className="w-32"
+                className="w-full sm:w-32"
                 min={1}
                 max={9999}
               />
-              <span className="text-sm text-muted-foreground">units</span>
+              <span className="shrink-0 text-sm text-muted-foreground">units</span>
             </div>
             {errors.threshold && (
               <p className="text-sm text-destructive">{errors.threshold.message}</p>
@@ -82,7 +82,7 @@ export function InventorySection() {
               Products with stock at or below this value will be flagged as low stock
             </p>
           </div>
-          <Button type="submit" size="sm" disabled={isSubmitting}>
+          <Button type="submit" size="sm" disabled={isSubmitting} className="w-full sm:w-auto">
             {isSubmitting ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (

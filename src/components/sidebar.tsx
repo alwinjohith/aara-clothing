@@ -68,7 +68,7 @@ export function Sidebar() {
     <>
       <button
         type="button"
-        className="fixed top-4 left-4 z-50 flex size-10 items-center justify-center rounded-xl border border-border/50 bg-sidebar text-sidebar-foreground shadow-md md:hidden"
+        className="fixed z-50 flex size-11 items-center justify-center rounded-xl border border-border/50 bg-sidebar text-sidebar-foreground shadow-md md:hidden top-[max(1rem,env(safe-area-inset-top))] left-[max(1rem,env(safe-area-inset-left))]"
         onClick={() => setOpen(true)}
         aria-label="Open menu"
       >
@@ -88,6 +88,7 @@ export function Sidebar() {
           "md:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full"
         )}
+        style={{ paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="flex h-16 items-center justify-between border-b border-border/50 px-5">
           <Link
@@ -124,7 +125,7 @@ export function Sidebar() {
           </Link>
           <button
             type="button"
-            className="flex size-8 items-center justify-center rounded-lg text-sidebar-foreground/60 hover:text-sidebar-foreground md:hidden"
+            className="flex size-11 items-center justify-center rounded-lg text-sidebar-foreground/60 hover:text-sidebar-foreground md:hidden"
             onClick={() => setOpen(false)}
             aria-label="Close menu"
           >
@@ -142,7 +143,7 @@ export function Sidebar() {
                 href={item.href}
                 onClick={handleNavClick}
                 className={cn(
-                  "group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200",
+                  "group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200",
                   active
                     ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
                     : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
