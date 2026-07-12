@@ -26,7 +26,7 @@ export function NotificationBell() {
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
-        className="relative flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-white/10 hover:text-white"
+        className="relative flex size-11 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-white/10 hover:text-white"
         aria-label="Notifications"
       >
         <Bell className="size-5" />

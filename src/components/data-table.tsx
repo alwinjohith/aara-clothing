@@ -39,14 +39,14 @@ export function DataTable<T>({
         </CardHeader>
       )}
       <CardContent className="p-0">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mx-px">
           <table className="w-full text-sm">
             <thead>
               <tr className="sticky top-0 border-b border-border/50 bg-muted/20 backdrop-blur-sm">
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className={`px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground ${col.className ?? ""}`}
+                    className={`whitespace-nowrap px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:px-4 ${col.className ?? ""}`}
                   >
                     {col.header}
                   </th>
@@ -92,7 +92,7 @@ export function DataTable<T>({
                     {columns.map((col) => (
                       <td
                         key={col.key}
-                        className={`px-4 py-3.5 ${col.className ?? ""}`}
+                        className={`whitespace-nowrap px-3 py-3.5 sm:whitespace-normal sm:px-4 ${col.className ?? ""}`}
                       >
                         {col.cell
                           ? col.cell(item)

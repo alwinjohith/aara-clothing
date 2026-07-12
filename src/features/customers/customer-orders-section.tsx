@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, ChevronDown, ChevronRight, Pencil, Loader2 } from "lucide-react";
+import { Plus, ChevronDown, ChevronRight, Pencil, Loader2, Package } from "lucide-react";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_FLOW, ORDER_STATUS_VARIANT, type OrderStatus } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useDashboardRefresh } from "@/components/providers/dashboard-refresh-provider";
@@ -88,7 +88,7 @@ function StatusSelector({
 
   if (allowedTransitions.length === 0) {
     return (
-      <Badge variant={statusVariant[optimisticStatus] ?? "secondary"}>
+      <Badge variant={statusVariant[optimisticStatus as OrderStatus] ?? "secondary"}>
         {ORDER_STATUS_LABELS[optimisticStatus as keyof typeof ORDER_STATUS_LABELS] ?? optimisticStatus}
       </Badge>
     );
@@ -140,7 +140,7 @@ export function CustomerOrdersSection({ customerId, orders, onStatusChange }: Pr
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
           <CardTitle>Order History</CardTitle>
-          <Link href={`/dashboard/customers/${customerId}/orders/new`}>
+          <Link href={`/dashboard/customers/${customerId}/orders/new`} className="self-start">
             <Button size="sm">
               <Plus className="size-4" />
               New Order
@@ -148,7 +148,15 @@ export function CustomerOrdersSection({ customerId, orders, onStatusChange }: Pr
           </Link>
         </CardHeader>
         <CardContent>
-          <p className="py-8 text-center text-sm text-muted-foreground">No orders yet</p>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="mb-3 flex size-12 items-center justify-center rounded-2xl bg-muted/50">
+              <Package className="size-6 text-muted-foreground/60" />
+            </div>
+            <p className="text-sm font-medium text-foreground">No orders yet</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Create the first order for this customer
+            </p>
+          </div>
         </CardContent>
       </Card>
     );
@@ -158,7 +166,7 @@ export function CustomerOrdersSection({ customerId, orders, onStatusChange }: Pr
     <Card>
       <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
         <CardTitle>Order History</CardTitle>
-        <Link href={`/dashboard/customers/${customerId}/orders/new`}>
+        <Link href={`/dashboard/customers/${customerId}/orders/new`} className="self-start">
           <Button size="sm">
             <Plus className="size-4" />
             New Order
@@ -167,21 +175,21 @@ export function CustomerOrdersSection({ customerId, orders, onStatusChange }: Pr
       </CardHeader>
       <CardContent className="p-0">
         {/* Status Filter Tabs */}
-        <div className="flex flex-wrap gap-1 border-b border-border/50 px-4 pt-2">
+        <div className="flex flex-nowrap gap-1 overflow-x-auto scrollbar-none border-b border-border/50 px-3 sm:px-4 pt-2">
           {(["all", "NOT_STARTED", "PROCESSING", "DONE"] as const).map((status) => (
             <button
               key={status}
               type="button"
               onClick={() => setStatusFilter(status)}
               className={cn(
-                "rounded-t-lg px-3 py-2 text-sm font-medium transition-colors",
+                "shrink-0 whitespace-nowrap rounded-t-lg px-3 py-2 text-xs font-medium transition-colors sm:text-sm",
                 statusFilter === status
                   ? "border-b-2 border-primary bg-muted/50 text-foreground"
                   : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
               )}
             >
               {status === "all" ? "All" : ORDER_STATUS_LABELS[status]}
-              <span className="ml-1.5 text-xs text-muted-foreground">({orderCounts[status]})</span>
+              <span className="ml-1 text-xs text-muted-foreground">({orderCounts[status]})</span>
             </button>
           ))}
         </div>
@@ -189,112 +197,193 @@ export function CustomerOrdersSection({ customerId, orders, onStatusChange }: Pr
         {filteredOrders.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">No orders with this status</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border/50 bg-muted/20 backdrop-blur-sm">
-                  <th className="w-10 px-2 py-3" />
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Order #</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Items</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.map((order, index) => {
-                  const isExpanded = expandedOrder === order.id;
-                  return (
-                    <tr key={order.id} className={cn("border-b border-border/30 last:border-0 table-row-hover", index % 2 === 1 && "bg-muted/5")}>
-                      <td colSpan={6} className="p-0">
-                        <div>
-                          <button
-                            type="button"
-                            onClick={() => toggleExpand(order.id)}
-                            className="flex w-full items-center px-2 py-3 text-left"
+          <>
+            {/* Mobile: Card view */}
+            <div className="md:hidden divide-y divide-border/30">
+              {filteredOrders.map((order) => {
+                const isExpanded = expandedOrder === order.id;
+                return (
+                  <div key={order.id}>
+                    <button
+                      type="button"
+                      onClick={() => toggleExpand(order.id)}
+                      className="flex w-full items-center gap-3 px-4 py-3 text-left"
+                    >
+                      <div className="flex size-6 shrink-0 items-center justify-center">
+                        {isExpanded ? (
+                          <ChevronDown className="size-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="size-4 text-muted-foreground" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs text-muted-foreground">#{order.orderNumber}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(order.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="mt-1 flex items-center gap-2">
+                          <StatusSelector
+                            orderId={order.id}
+                            currentStatus={order.status}
+                            onStatusChange={onStatusChange}
+                          />
+                          <span className="text-xs text-muted-foreground">
+                            {order.items.length} {order.items.length === 1 ? "item" : "items"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-1">
+                        <Link
+                          href={`/dashboard/customers/${customerId}/orders/${order.id}`}
+                          className="text-xs font-medium text-primary"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          View
+                        </Link>
+                        {(order.status as string) === "NOT_STARTED" && (
+                          <Link
+                            href={`/dashboard/customers/${customerId}/orders/${order.id}/edit`}
+                            onClick={(e) => e.stopPropagation()}
                           >
-                            <div className="flex w-6 shrink-0 items-center justify-center">
-                              {isExpanded ? (
-                                <ChevronDown className="size-4 text-muted-foreground" />
-                              ) : (
-                                <ChevronRight className="size-4 text-muted-foreground" />
-                              )}
+                            <Button variant="ghost" size="icon-sm">
+                              <Pencil className="size-4" />
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
+                    </button>
+
+                    {isExpanded && order.items.length > 0 && (
+                      <div className="border-t border-border/20 bg-muted/10 px-4 py-3 space-y-2">
+                        {order.items.map((item) => (
+                          <div key={item.id} className="flex items-start justify-between gap-2 text-sm">
+                            <div className="min-w-0 flex-1">
+                              <p className="font-medium truncate">{item.variant.product.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {item.variant.color} / {item.variant.size}
+                              </p>
+                              <p className="font-mono text-[10px] text-muted-foreground">{item.variant.sku}</p>
                             </div>
-                            <span className="w-[100px] px-2 font-mono text-xs">#{order.orderNumber}</span>
-                            <div className="w-[160px] px-2">
-                              <StatusSelector
-                                orderId={order.id}
-                                currentStatus={order.status}
-                                onStatusChange={onStatusChange}
-                              />
-                            </div>
-                            <span className="w-[60px] px-2 text-center text-muted-foreground">{order.items.length}</span>
-                            <span className="w-[120px] px-2 text-muted-foreground">
-                              {new Date(order.createdAt).toLocaleDateString()}
-                            </span>
-                            <div className="flex flex-1 items-center justify-end gap-2 px-2">
-                              <Link
-                                href={`/dashboard/customers/${customerId}/orders/${order.id}`}
-                                className="text-sm font-medium text-primary hover:underline"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                View
-                              </Link>
-                              {(order.status as string) === "NOT_STARTED" && (
+                            <span className="shrink-0 font-medium">x{item.quantity}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop: Table view */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border/50 bg-muted/20 backdrop-blur-sm">
+                    <th className="w-10 px-2 py-3" />
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Order #</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Items</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOrders.map((order, index) => {
+                    const isExpanded = expandedOrder === order.id;
+                    return (
+                      <tr key={order.id} className={cn("border-b border-border/30 last:border-0 table-row-hover", index % 2 === 1 && "bg-muted/5")}>
+                        <td colSpan={6} className="p-0">
+                          <div>
+                            <button
+                              type="button"
+                              onClick={() => toggleExpand(order.id)}
+                              className="flex w-full items-center px-2 py-3 text-left"
+                            >
+                              <div className="flex w-6 shrink-0 items-center justify-center">
+                                {isExpanded ? (
+                                  <ChevronDown className="size-4 text-muted-foreground" />
+                                ) : (
+                                  <ChevronRight className="size-4 text-muted-foreground" />
+                                )}
+                              </div>
+                              <span className="w-[100px] px-2 font-mono text-xs">#{order.orderNumber}</span>
+                              <div className="w-[160px] px-2">
+                                <StatusSelector
+                                  orderId={order.id}
+                                  currentStatus={order.status}
+                                  onStatusChange={onStatusChange}
+                                />
+                              </div>
+                              <span className="w-[60px] px-2 text-center text-muted-foreground">{order.items.length}</span>
+                              <span className="w-[120px] px-2 text-muted-foreground">
+                                {new Date(order.createdAt).toLocaleDateString()}
+                              </span>
+                              <div className="flex flex-1 items-center justify-end gap-2 px-2">
                                 <Link
-                                  href={`/dashboard/customers/${customerId}/orders/${order.id}/edit`}
+                                  href={`/dashboard/customers/${customerId}/orders/${order.id}`}
+                                  className="text-sm font-medium text-primary hover:underline"
                                   onClick={(e) => e.stopPropagation()}
                                 >
-                                  <Button variant="ghost" size="icon-sm">
-                                    <Pencil className="size-4" />
-                                  </Button>
+                                  View
                                 </Link>
-                              )}
-                            </div>
-                          </button>
+                                {(order.status as string) === "NOT_STARTED" && (
+                                  <Link
+                                    href={`/dashboard/customers/${customerId}/orders/${order.id}/edit`}
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <Button variant="ghost" size="icon-sm">
+                                      <Pencil className="size-4" />
+                                    </Button>
+                                  </Link>
+                                )}
+                              </div>
+                            </button>
 
-                          {isExpanded && order.items.length > 0 && (
-                            <div className="border-t border-border/20 bg-muted/10">
-                              <table className="w-full text-sm">
-                                <thead>
-                                  <tr className="border-b border-border/10">
-                                    <th className="w-10 px-2" />
-                                    <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Product</th>
-                                    <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Variant</th>
-                                    <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">SKU</th>
-                                    <th className="px-4 py-2 text-right text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Qty</th>
-                                    <th className="w-[100px] px-2" />
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {order.items.map((item) => (
-                                    <tr key={item.id} className="border-b border-border/10 last:border-0">
-                                      <td className="w-10 px-2" />
-                                      <td className="px-4 py-2 font-medium text-foreground/80">
-                                        {item.variant.product.name}
-                                      </td>
-                                      <td className="px-4 py-2 text-muted-foreground">
-                                        {item.variant.color} / {item.variant.size}
-                                      </td>
-                                      <td className="px-4 py-2">
-                                        <span className="font-mono text-xs text-muted-foreground">{item.variant.sku}</span>
-                                      </td>
-                                      <td className="px-4 py-2 text-right font-medium">{item.quantity}</td>
-                                      <td className="w-[100px] px-2" />
+                            {isExpanded && order.items.length > 0 && (
+                              <div className="border-t border-border/20 bg-muted/10">
+                                <table className="w-full text-sm">
+                                  <thead>
+                                    <tr className="border-b border-border/10">
+                                      <th className="w-10 px-2" />
+                                      <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Product</th>
+                                      <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Variant</th>
+                                      <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">SKU</th>
+                                      <th className="px-4 py-2 text-right text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Qty</th>
+                                      <th className="w-[100px] px-2" />
                                     </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                                  </thead>
+                                  <tbody>
+                                    {order.items.map((item) => (
+                                      <tr key={item.id} className="border-b border-border/10 last:border-0">
+                                        <td className="w-10 px-2" />
+                                        <td className="px-4 py-2 font-medium text-foreground/80">
+                                          {item.variant.product.name}
+                                        </td>
+                                        <td className="px-4 py-2 text-muted-foreground">
+                                          {item.variant.color} / {item.variant.size}
+                                        </td>
+                                        <td className="px-4 py-2">
+                                          <span className="font-mono text-xs text-muted-foreground">{item.variant.sku}</span>
+                                        </td>
+                                        <td className="px-4 py-2 text-right font-medium">{item.quantity}</td>
+                                        <td className="w-[100px] px-2" />
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </CardContent>
     </Card>

@@ -74,7 +74,7 @@ export function SearchableSelect({
           if (!disabled) setOpen(!open);
         }}
         className={cn(
-          "flex h-10 w-full items-center justify-between rounded-xl border border-input bg-muted/30 px-3 py-2 pr-8 text-sm shadow-sm transition-all duration-200",
+          "flex h-11 w-full items-center justify-between rounded-xl border border-input bg-muted/30 px-3 py-2 pr-8 text-sm shadow-sm transition-all duration-200",
           "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:border-primary/50 focus-visible:bg-muted/50",
           "disabled:cursor-not-allowed disabled:opacity-50",
           open && "ring-2 ring-ring/30 border-primary/50 bg-muted/50"
@@ -96,7 +96,7 @@ export function SearchableSelect({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Type to search..."
-              className="h-10 w-full bg-transparent px-2 text-sm outline-none placeholder:text-muted-foreground"
+              className="h-11 w-full bg-transparent px-2 text-sm outline-none placeholder:text-muted-foreground"
             />
             {query && (
               <button

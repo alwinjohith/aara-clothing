@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useTransition } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,7 @@ export function RecentOrders() {
   const { refreshKey } = useDashboardRefresh();
   const [orders, setOrders] = useState<RecentOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [, startTransition] = useTransition();
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -38,14 +39,18 @@ export function RecentOrders() {
   }, []);
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    startTransition(() => {
+      fetchOrders();
+    });
+  }, [fetchOrders, startTransition]);
 
   useEffect(() => {
     if (refreshKey > 0) {
-      fetchOrders();
+      startTransition(() => {
+        fetchOrders();
+      });
     }
-  }, [refreshKey, fetchOrders]);
+  }, [refreshKey, fetchOrders, startTransition]);
 
   return (
     <Card>
@@ -80,10 +85,10 @@ export function RecentOrders() {
               return (
                 <div
                   key={order.id}
-                  className="flex items-center justify-between rounded-lg border border-border/30 p-3 transition-colors hover:bg-muted/30"
+                  className="flex items-center justify-between gap-3 rounded-lg border border-border/30 p-3 transition-colors hover:bg-muted/30"
                 >
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-medium">
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <p className="truncate text-sm font-medium">
                       #{order.orderNumber}
                       <span className="ml-2 text-muted-foreground">— {order.customer.name}</span>
                     </p>
@@ -91,7 +96,7 @@ export function RecentOrders() {
                       {totalItems} items · {new Date(order.createdAt).toLocaleDateString()}
                     </p>
                   </div>
-                  <Badge variant={ORDER_STATUS_VARIANT[order.status as keyof typeof ORDER_STATUS_VARIANT] ?? "secondary"}>
+                  <Badge variant={ORDER_STATUS_VARIANT[order.status as keyof typeof ORDER_STATUS_VARIANT] ?? "secondary"} className="shrink-0">
                     {ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS] ?? order.status}
                   </Badge>
                 </div>

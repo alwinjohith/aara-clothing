@@ -40,21 +40,21 @@ export function AboutSection() {
       </CardHeader>
       <CardContent className="space-y-6">
         <dl className="divide-y divide-border/40">
-          <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-            <dt className="text-sm text-muted-foreground">Application Name</dt>
-            <dd className="text-sm font-medium">{APP_NAME}</dd>
+          <div className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
+            <dt className="text-sm text-muted-foreground shrink-0">Application Name</dt>
+            <dd className="text-sm font-medium text-right">{APP_NAME}</dd>
           </div>
-          <div className="flex items-center justify-between py-3">
-            <dt className="text-sm text-muted-foreground">Current Version</dt>
-            <dd className="text-sm font-medium">{APP_VERSION}</dd>
+          <div className="flex items-center justify-between gap-4 py-3">
+            <dt className="text-sm text-muted-foreground shrink-0">Current Version</dt>
+            <dd className="text-sm font-medium text-right">{APP_VERSION}</dd>
           </div>
-          <div className="flex items-center justify-between py-3">
-            <dt className="text-sm text-muted-foreground">Build Version</dt>
-            <dd className="text-sm font-medium">{BUILD_VERSION}</dd>
+          <div className="flex items-center justify-between gap-4 py-3">
+            <dt className="text-sm text-muted-foreground shrink-0">Build Version</dt>
+            <dd className="text-sm font-medium text-right">{BUILD_VERSION}</dd>
           </div>
-          <div className="flex items-center justify-between py-3 last:pb-0">
-            <dt className="text-sm text-muted-foreground">Environment</dt>
-            <dd className="text-sm font-medium">{ENVIRONMENT}</dd>
+          <div className="flex items-center justify-between gap-4 py-3 last:pb-0">
+            <dt className="text-sm text-muted-foreground shrink-0">Environment</dt>
+            <dd className="text-sm font-medium text-right">{ENVIRONMENT}</dd>
           </div>
         </dl>
 

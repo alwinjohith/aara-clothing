@@ -114,15 +114,16 @@ export function CustomerForm({ mode, initialData }: CustomerFormProps) {
             )}
           </div>
 
-          <div className="flex flex-wrap gap-3 pt-2">
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
               {isSubmitting ? (
                 "Saving..."
               ) : (

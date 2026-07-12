@@ -16,7 +16,7 @@ export default async function EditCategoryPage({ params }: Props) {
   const disabledIds = await getDescendantIds(id);
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <CategoryForm
         mode="edit"
         categories={categories}

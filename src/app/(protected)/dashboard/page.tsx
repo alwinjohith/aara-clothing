@@ -13,7 +13,7 @@ export default async function DashboardPage() {
   const username = session?.user?.name ?? session?.user?.username ?? "there";
 
   return (
-    <div className="relative p-8">
+    <div className="relative p-4 sm:p-8">
       {/* Background decorative elements */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -right-32 -top-32 size-96 rounded-full blob-primary blur-3xl" />
