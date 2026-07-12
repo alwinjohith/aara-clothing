@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { Settings } from "lucide-react";
+import { Settings, User, Shield, Monitor, Boxes, Info } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ProfileSection } from "@/features/settings/profile-section";
 import { AppearanceSection } from "@/features/settings/appearance-section";
 import { InventorySection } from "@/features/settings/inventory-section";
@@ -13,17 +13,14 @@ interface SettingsContentProps {
   username: string;
 }
 
+const TAB_STORAGE_KEY = "aara-settings-tab";
+
 export function SettingsContent({ name, username }: SettingsContentProps) {
-  const profileSectionRef = useRef<HTMLDivElement>(null);
-
-  function scrollToPassword() {
-    profileSectionRef.current?.scrollIntoView({ behavior: "smooth" });
-  }
-
   return (
     <div className="relative space-y-6 p-8">
       <div className="pointer-events-none absolute -top-24 -right-24 -z-10 size-56 rounded-full bg-aara-accent/8 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 -left-24 -z-10 size-40 rounded-full bg-aara-highlight/8 blur-3xl" />
+
       <div className="flex items-center gap-3">
         <div className="flex size-10 items-center justify-center rounded-xl gradient-accent">
           <Settings className="size-5 text-white" />
@@ -38,18 +35,47 @@ export function SettingsContent({ name, username }: SettingsContentProps) {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div ref={profileSectionRef} className="space-y-6">
-          <ProfileSection name={name} username={username} />
-        </div>
+      <Tabs defaultValue="profile" storageKey={TAB_STORAGE_KEY}>
+        <TabsList>
+          <TabsTrigger value="profile" icon={<User />}>
+            Profile
+          </TabsTrigger>
+          <TabsTrigger value="security" icon={<Shield />}>
+            Security
+          </TabsTrigger>
+          <TabsTrigger value="appearance" icon={<Monitor />}>
+            Appearance
+          </TabsTrigger>
+          <TabsTrigger value="inventory" icon={<Boxes />}>
+            Inventory
+          </TabsTrigger>
+          <TabsTrigger value="about" icon={<Info />}>
+            About
+          </TabsTrigger>
+        </TabsList>
 
-        <div className="space-y-6">
-          <AppearanceSection />
-          <InventorySection />
-          <AboutSection />
-          <SecuritySection onChangePasswordClick={scrollToPassword} />
+        <div className="flex-1 min-w-0">
+          <TabsContent value="profile">
+            <ProfileSection name={name} username={username} />
+          </TabsContent>
+
+          <TabsContent value="security">
+            <SecuritySection />
+          </TabsContent>
+
+          <TabsContent value="appearance">
+            <AppearanceSection />
+          </TabsContent>
+
+          <TabsContent value="inventory">
+            <InventorySection />
+          </TabsContent>
+
+          <TabsContent value="about">
+            <AboutSection />
+          </TabsContent>
         </div>
-      </div>
+      </Tabs>
     </div>
   );
 }
