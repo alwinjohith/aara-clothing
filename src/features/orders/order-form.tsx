@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Save } from "lucide-react";
+import { Plus, Trash2, Save, Package } from "lucide-react";
 import { ORDER_STATUS_LABELS, ORDER_STATUSES, type OrderStatus } from "@/lib/constants";
 
 interface VariantItem {
@@ -217,6 +218,29 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
     return <div className="p-6 text-muted-foreground">Loading products...</div>;
   }
 
+  if (products.length === 0) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>{mode === "create" ? "Create New Order" : "Edit Order"}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="flex size-12 items-center justify-center rounded-xl bg-muted/50 mb-4">
+                <Package className="size-6 text-muted-foreground" />
+              </div>
+              <p className="text-sm font-medium text-foreground">No inventory available</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Add products to inventory before creating an order.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -228,14 +252,15 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="space-y-2">
                 <Label>Product</Label>
-                <Select
+                <SearchableSelect
                   value={selectedProductId}
                   onChange={(val) => {
                     setSelectedProductId(val);
                     setSelectedVariantId("");
                     setQuantity(1);
                   }}
-                  placeholder="Select a product"
+                  placeholder="Search products..."
+                  emptyMessage="No products available"
                   items={products.map((p) => ({
                     value: p.id,
                     label: p.name,
