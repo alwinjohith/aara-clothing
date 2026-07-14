@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { NotificationBell } from "@/components/notification-bell";
 import { SignOutButton } from "@/features/auth/sign-out-button";
 import {
-  Search,
   Sun,
   Moon,
   ChevronDown,
@@ -41,7 +40,7 @@ function getInitials(name: string) {
 
 export function Header({ username }: { username: string }) {
   const [profileOpen, setProfileOpen] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
   const { theme, setTheme } = useTheme();
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -56,8 +55,14 @@ export function Header({ username }: { username: string }) {
   }, []);
 
   return (
-    <div className="relative mb-6 overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-[var(--aara-secondary)] to-[var(--aara-accent)] shadow-lg shadow-aara-secondary/10 sm:mb-8">
-      <div className="relative z-10 px-4 pb-4 pt-4 sm:px-6 sm:pb-5 sm:pt-5">
+    <div className="relative mb-6 rounded-2xl border border-border/40 bg-gradient-to-br from-[var(--aara-secondary)] to-[var(--aara-accent)] shadow-lg shadow-aara-secondary/10 sm:mb-8">
+      <div className="absolute inset-0 overflow-hidden rounded-2xl">
+        <div className="absolute -right-16 -top-16 size-48 rounded-full bg-white/[0.06]" />
+        <div className="absolute -bottom-8 -right-8 size-32 rounded-full bg-white/[0.04]" />
+        <div className="absolute -left-8 -top-8 size-24 rounded-full bg-white/[0.03]" />
+        <div className="absolute bottom-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      </div>
+      <div className="relative px-4 pb-4 pt-4 sm:px-6 sm:pb-5 sm:pt-5">
         {/* Top row: greeting + actions */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 space-y-1">
@@ -71,16 +76,6 @@ export function Header({ username }: { username: string }) {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {/* Search toggle */}
-            <button
-              type="button"
-              onClick={() => setSearchFocused(!searchFocused)}
-              className="flex size-9 items-center justify-center rounded-xl text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white"
-              aria-label="Search"
-            >
-              <Search className="size-4" />
-            </button>
-
             {/* Theme toggle */}
             <button
               type="button"
@@ -88,7 +83,7 @@ export function Header({ username }: { username: string }) {
               className="flex size-9 items-center justify-center rounded-xl text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white"
               aria-label="Toggle theme"
             >
-              {theme === "dark" ? (
+              {mounted && theme === "dark" ? (
                 <Sun className="size-4" />
               ) : (
                 <Moon className="size-4" />
@@ -127,28 +122,7 @@ export function Header({ username }: { username: string }) {
             </div>
           </div>
         </div>
-
-        {/* Search bar (collapsible) */}
-        {searchFocused && (
-          <div className="mt-3 animate-in fade-in-0 slide-in-from-top-2 duration-200">
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-white/50" />
-              <input
-                type="text"
-                placeholder="Search products, orders, customers..."
-                className="w-full rounded-xl border border-white/10 bg-white/10 py-2.5 pl-10 pr-4 text-sm text-white placeholder-white/40 backdrop-blur-sm transition-all duration-200 focus:border-white/20 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/10"
-                autoFocus
-              />
-            </div>
-          </div>
-        )}
       </div>
-
-      {/* Decorative elements */}
-      <div className="absolute -right-16 -top-16 size-48 rounded-full bg-white/[0.06]" />
-      <div className="absolute -bottom-8 -right-8 size-32 rounded-full bg-white/[0.04]" />
-      <div className="absolute -left-8 -top-8 size-24 rounded-full bg-white/[0.03]" />
-      <div className="absolute bottom-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </div>
   );
 }

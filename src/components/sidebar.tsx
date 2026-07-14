@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { ROUTES } from "@/lib/constants";
 import { SignOutButton } from "@/features/auth/sign-out-button";
 import {
@@ -95,21 +94,15 @@ export function Sidebar() {
             className="flex items-center transition-opacity duration-200 hover:opacity-80"
             onClick={handleNavClick}
           >
-            <Image
+            <img
               src="/aara-logo-black.png"
               alt="Aara Clothing"
-              width={120}
-              height={32}
               className="h-8 w-auto object-contain dark:hidden"
-              priority
             />
-            <Image
+            <img
               src="/aara-logo-white.png"
               alt="Aara Clothing"
-              width={120}
-              height={32}
               className="h-8 w-auto object-contain hidden dark:block"
-              priority
             />
           </Link>
           <button
