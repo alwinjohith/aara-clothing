@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { listProducts } from "@/features/inventory/inventory-service";
+import { listProducts, getVariantsInUse } from "@/features/inventory/inventory-service";
 import { productQuerySchema } from "@/features/inventory/inventory-validation";
 import { ProductTable } from "@/features/inventory/product-table";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,10 @@ export default async function InventoryPage({ searchParams }: Props) {
     search,
   });
 
-  const result = await listProducts(query);
+  const [result, variantsInUse] = await Promise.all([
+    listProducts(query),
+    getVariantsInUse(),
+  ]);
 
   const rows = result.data.map((p) => ({
     id: p.id,
@@ -58,6 +61,7 @@ export default async function InventoryPage({ searchParams }: Props) {
       <Suspense fallback={<div>Loading...</div>}>
         <ProductTable
           data={rows}
+          variantsInUse={variantsInUse}
           page={result.page}
           totalPages={result.totalPages}
           search={query.search ?? ""}

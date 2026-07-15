@@ -30,6 +30,7 @@ interface ProductRow {
 
 interface Props {
   data: ProductRow[];
+  variantsInUse: Map<string, { inUse: number; ordered: number }>;
   page: number;
   totalPages: number;
   search: string;
@@ -49,7 +50,7 @@ function StockBadge({ stock }: { stock: number }) {
   );
 }
 
-export function ProductTable({ data, page, totalPages, search }: Props) {
+export function ProductTable({ data, variantsInUse, page, totalPages, search }: Props) {
   const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -174,14 +175,27 @@ export function ProductTable({ data, page, totalPages, search }: Props) {
 
               {isExpanded && item.variants.length > 0 && (
                 <div className="border-t border-border/30 bg-muted/10 px-4 py-3 space-y-2">
-                  {item.variants.map((v) => (
-                    <div key={v.id} className="flex items-center justify-between gap-2 text-sm pl-7">
-                      <span className="text-muted-foreground">
-                        {v.color} / {v.size}
-                      </span>
-                      <StockBadge stock={v.stock} />
-                    </div>
-                  ))}
+                  {item.variants.map((v) => {
+                    const usage = variantsInUse.get(v.id);
+                    const inUse = usage?.inUse ?? 0;
+                    const ordered = usage?.ordered ?? 0;
+                    return (
+                      <div key={v.id} className="flex items-center justify-between gap-2 text-sm pl-7">
+                        <span className="text-muted-foreground">
+                          {v.color} / {v.size}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          {ordered > 0 && (
+                            <Badge variant="secondary" className="text-[10px]">Order({ordered})</Badge>
+                          )}
+                          {inUse > 0 && (
+                            <Badge variant="warning" className="text-[10px]">In Use: {inUse}</Badge>
+                          )}
+                          <StockBadge stock={v.stock} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
               {isExpanded && item.variants.length === 0 && (
@@ -264,24 +278,43 @@ export function ProductTable({ data, page, totalPages, search }: Props) {
                       </div>
 
                       {isExpanded && (
-                        <div className="border-t border-border/20 bg-muted/10">
+                        <div className="border-t border-border/20 bg-muted/10 pl-8">
                           {item.variants.length > 0 ? (
-                            <table className="w-full text-sm ml-8">
+                            <table className="w-full text-sm table-fixed">
                               <thead>
                                 <tr className="border-b border-border/10">
                                   <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Color</th>
                                   <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Size</th>
+                                  <th className="px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">In Use</th>
                                   <th className="px-4 py-2 text-right text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Stock</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {item.variants.map((v) => (
-                                  <tr key={v.id} className="border-b border-border/10 last:border-0">
-                                    <td className="px-4 py-2 text-muted-foreground">{v.color}</td>
-                                    <td className="px-4 py-2 text-muted-foreground">{v.size}</td>
-                                    <td className="px-4 py-2 text-right"><StockBadge stock={v.stock} /></td>
-                                  </tr>
-                                ))}
+                                {item.variants.map((v) => {
+                                  const usage = variantsInUse.get(v.id);
+                                  const inUse = usage?.inUse ?? 0;
+                                  const ordered = usage?.ordered ?? 0;
+                                  return (
+                                    <tr key={v.id} className="border-b border-border/10 last:border-0">
+                                      <td className="px-4 py-2 text-muted-foreground">{v.color}</td>
+                                      <td className="px-4 py-2 text-muted-foreground">{v.size}</td>
+                                      <td className="px-4 py-2 text-center">
+                                        <div className="flex items-center justify-center gap-1.5">
+                                          {ordered > 0 && (
+                                            <Badge variant="secondary" className="text-[10px]">Order({ordered})</Badge>
+                                          )}
+                                          {inUse > 0 && (
+                                            <Badge variant="warning" className="text-[10px]">In Use: {inUse}</Badge>
+                                          )}
+                                          {ordered === 0 && inUse === 0 && (
+                                            <span className="text-muted-foreground">—</span>
+                                          )}
+                                        </div>
+                                      </td>
+                                      <td className="px-4 py-2 text-right"><StockBadge stock={v.stock} /></td>
+                                    </tr>
+                                  );
+                                })}
                               </tbody>
                             </table>
                           ) : (
