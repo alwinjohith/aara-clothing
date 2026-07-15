@@ -211,9 +211,17 @@ export function ProductTable({ data, variantsInUse, page, totalPages, search }: 
       {/* Desktop table view with expandable rows */}
       <div className="hidden md:block rounded-xl border border-border/50 overflow-hidden">
         <table className="w-full text-sm">
+          <colgroup>
+            <col className="w-8" />
+            <col />
+            <col className="w-24" />
+            <col className="w-24" />
+            <col className="w-28" />
+            <col className="w-20" />
+          </colgroup>
           <thead>
             <tr className="border-b border-border/50 bg-muted/20">
-              <th className="w-8 px-3 py-3" />
+              <th className="px-3 py-3" />
               <th className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Product</th>
               <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">Variants</th>
               <th className="px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</th>
@@ -242,12 +250,13 @@ export function ProductTable({ data, variantsInUse, page, totalPages, search }: 
                         </button>
                         <div className="flex flex-1 items-center py-3">
                           <div className="flex-1 px-0">
-                            <Link
-                              href={`/dashboard/inventory/${item.id}`}
-                              className="font-medium text-foreground transition-colors hover:text-primary"
+                            <button
+                              type="button"
+                              onClick={() => toggleExpand(item.id)}
+                              className="font-medium text-foreground transition-colors hover:text-primary text-left"
                             >
                               {item.name}
-                            </Link>
+                            </button>
                           </div>
                           <div className="w-24 text-center text-muted-foreground">
                             {item.variants.length}
@@ -280,7 +289,7 @@ export function ProductTable({ data, variantsInUse, page, totalPages, search }: 
                       {isExpanded && (
                         <div className="border-t border-border/20 bg-muted/10 pl-8">
                           {item.variants.length > 0 ? (
-                            <table className="w-full text-sm table-fixed">
+                            <table className="w-full text-sm">
                               <thead>
                                 <tr className="border-b border-border/10">
                                   <th className="px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Color</th>
@@ -301,7 +310,7 @@ export function ProductTable({ data, variantsInUse, page, totalPages, search }: 
                                       <td className="px-4 py-2 text-center">
                                         <div className="flex items-center justify-center gap-1.5">
                                           {ordered > 0 && (
-                                            <Badge variant="secondary" className="text-[10px]">Order({ordered})</Badge>
+                                            <Badge variant="secondary" className="text-[10px]">Ordered: {ordered}</Badge>
                                           )}
                                           {inUse > 0 && (
                                             <Badge variant="warning" className="text-[10px]">In Use: {inUse}</Badge>
