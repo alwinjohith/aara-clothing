@@ -303,22 +303,13 @@ export async function updateOrderStatus(id: string, status: OrderStatus) {
   });
   if (!existing) throw new Error("Order not found");
 
-  const allowedTransitions = ORDER_STATUS_FLOW[existing.status];
-  const currentStatus = existing.status as OrderStatus;
-
-  if (status === currentStatus) {
+  if (status === (existing.status as OrderStatus)) {
     return getOrderById(id);
-  }
-
-  if (!allowedTransitions.includes(status)) {
-    throw new Error(
-      `Cannot transition from ${currentStatus} to ${status}`
-    );
   }
 
   return prisma.$transaction(async (tx) => {
     // When reverting to NOT_STARTED, restore stock (undo the original deduction)
-    if (status === "NOT_STARTED" && currentStatus !== "NOT_STARTED") {
+    if (status === "NOT_STARTED" && existing.status !== "NOT_STARTED") {
       for (const item of existing.items) {
         await tx.productVariant.update({
           where: { id: item.variantId },
@@ -347,6 +338,26 @@ export async function updateOrderStatus(id: string, status: OrderStatus) {
         },
       },
     });
+  });
+}
+
+export async function deleteOrder(id: string) {
+  const existing = await prisma.order.findUnique({
+    where: { id },
+    include: { items: true },
+  });
+  if (!existing) throw new Error("Order not found");
+
+  return prisma.$transaction(async (tx) => {
+    for (const item of existing.items) {
+      await tx.productVariant.update({
+        where: { id: item.variantId },
+        data: { stock: { increment: item.quantity } },
+      });
+    }
+
+    await tx.orderItem.deleteMany({ where: { orderId: id } });
+    await tx.order.delete({ where: { id } });
   });
 }
 

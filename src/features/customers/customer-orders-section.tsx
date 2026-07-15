@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, ChevronDown, ChevronRight, Pencil, Loader2, Package } from "lucide-react";
+import { Plus, ChevronDown, ChevronRight, Pencil, Trash2, Loader2, Package } from "lucide-react";
 import { ORDER_STATUSES, ORDER_STATUS_LABELS, ORDER_STATUS_VARIANT, type OrderStatus } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useDashboardRefresh } from "@/components/providers/dashboard-refresh-provider";
@@ -35,6 +35,7 @@ interface Props {
   customerId: string;
   orders: OrderRow[];
   onStatusChange?: () => void;
+  onNewOrder?: () => void;
 }
 
 const statusVariant = ORDER_STATUS_VARIANT;
@@ -120,12 +121,31 @@ function StatusSelector({
   );
 }
 
-export function CustomerOrdersSection({ customerId, orders, onStatusChange }: Props) {
+export function CustomerOrdersSection({ customerId, orders, onStatusChange, onNewOrder }: Props) {
+  const router = useRouter();
+  const { requestRefresh } = useDashboardRefresh();
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   function toggleExpand(orderId: string) {
     setExpandedOrder((prev) => (prev === orderId ? null : orderId));
+  }
+
+  async function handleDeleteOrder(orderId: string) {
+    setDeletingId(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, { method: "DELETE" });
+      const result = await res.json();
+      if (!result.success) throw new Error(result.error);
+      toast.success("Order deleted");
+      requestRefresh();
+      router.refresh();
+    } catch (error) {
+      if (error instanceof Error) toast.error(error.message);
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   const filteredOrders = statusFilter === "all"
@@ -144,12 +164,19 @@ export function CustomerOrdersSection({ customerId, orders, onStatusChange }: Pr
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
           <CardTitle>Order History</CardTitle>
-          <Link href={`/dashboard/customers/${customerId}/orders/new`} className="self-start">
-            <Button size="sm">
+          {onNewOrder ? (
+            <Button size="sm" onClick={onNewOrder} className="self-start">
               <Plus className="size-4" />
               New Order
             </Button>
-          </Link>
+          ) : (
+            <Link href={`/dashboard/customers/${customerId}/orders/new`} className="self-start">
+              <Button size="sm">
+                <Plus className="size-4" />
+                New Order
+              </Button>
+            </Link>
+          )}
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -170,12 +197,19 @@ export function CustomerOrdersSection({ customerId, orders, onStatusChange }: Pr
     <Card>
       <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
         <CardTitle>Order History</CardTitle>
-        <Link href={`/dashboard/customers/${customerId}/orders/new`} className="self-start">
-          <Button size="sm">
+        {onNewOrder ? (
+          <Button size="sm" onClick={onNewOrder} className="self-start">
             <Plus className="size-4" />
             New Order
           </Button>
-        </Link>
+        ) : (
+          <Link href={`/dashboard/customers/${customerId}/orders/new`} className="self-start">
+            <Button size="sm">
+              <Plus className="size-4" />
+              New Order
+            </Button>
+          </Link>
+        )}
       </CardHeader>
       <CardContent className="p-0">
         {/* Status Filter Tabs */}
@@ -258,6 +292,21 @@ export function CustomerOrdersSection({ customerId, orders, onStatusChange }: Pr
                             </Button>
                           </Link>
                         )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteOrder(order.id);
+                          }}
+                          disabled={deletingId === order.id}
+                          className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors disabled:opacity-50"
+                        >
+                          {deletingId === order.id ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="size-4" />
+                          )}
+                        </button>
                       </div>
                     </div>
 
@@ -352,6 +401,18 @@ export function CustomerOrdersSection({ customerId, orders, onStatusChange }: Pr
                                   </Button>
                                 </Link>
                               )}
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteOrder(order.id)}
+                                disabled={deletingId === order.id}
+                                className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors disabled:opacity-50"
+                              >
+                                {deletingId === order.id ? (
+                                  <Loader2 className="size-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="size-4" />
+                                )}
+                              </button>
                             </div>
                           </td>
                         </tr>
