@@ -6,15 +6,6 @@ import { ProductTable } from "@/features/inventory/product-table";
 import { Button } from "@/components/ui/button";
 import { FloatingActionButton } from "@/components/fab";
 import { Boxes, Plus } from "lucide-react";
-import type { Product } from "@/types";
-
-interface ProductRow {
-  id: string;
-  name: string;
-  variantCount: number;
-  isActive: boolean;
-  createdAt: Date;
-}
 
 interface Props {
   searchParams: Promise<{ page?: string; search?: string }>;
@@ -30,10 +21,10 @@ export default async function InventoryPage({ searchParams }: Props) {
 
   const result = await listProducts(query);
 
-  const rows: ProductRow[] = result.data.map((p) => ({
+  const rows = result.data.map((p) => ({
     id: p.id,
     name: p.name,
-    variantCount: (p as Product & { _count?: { variants: number } })._count?.variants ?? 0,
+    variants: (p as typeof p & { variants?: { id: string; color: string; size: string; stock: number }[] }).variants ?? [],
     isActive: p.isActive,
     createdAt: p.createdAt,
   }));

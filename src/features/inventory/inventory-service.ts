@@ -24,7 +24,10 @@ export async function listProducts(query: ProductQuery) {
       take: limit,
       include: {
         category: { select: { id: true, name: true } },
-        _count: { select: { variants: true } },
+        variants: {
+          select: { id: true, color: true, size: true, stock: true },
+          orderBy: { createdAt: "asc" },
+        },
       },
       orderBy: { createdAt: "desc" },
     }),
@@ -51,11 +54,6 @@ export async function getProductById(id: string) {
     include: {
       category: { select: { id: true, name: true } },
       variants: {
-        include: {
-          images: {
-            orderBy: { createdAt: "asc" },
-          },
-        },
         orderBy: { createdAt: "asc" },
       },
     },
@@ -120,7 +118,6 @@ export async function listInventory(query: InventoryQuery) {
 
   if (search) {
     where.OR = [
-      { sku: { contains: search, mode: "insensitive" } },
       { color: { contains: search, mode: "insensitive" } },
       { size: { contains: search, mode: "insensitive" } },
       { product: { name: { contains: search, mode: "insensitive" } } },
