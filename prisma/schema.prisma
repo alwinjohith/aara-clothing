@@ -70,7 +70,7 @@ model Customer {
 
 model Order {
   id          String      @id @default(uuid())
-  customerId  String
+  customerId  String?
   status      OrderStatus @default(NOT_STARTED)
   subtotal    Decimal     @db.Decimal(10, 2)
   discount    Decimal     @default(0) @db.Decimal(10, 2)
@@ -80,7 +80,7 @@ model Order {
   updatedAt   DateTime    @updatedAt
   orderNumber Int         @default(autoincrement())
   user        User        @relation(fields: [createdBy], references: [id])
-  customer    Customer    @relation(fields: [customerId], references: [id])
+  customer    Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
   items       OrderItem[]
   notifications Notification[]
 }
@@ -129,4 +129,10 @@ enum OrderStatus {
   NOT_STARTED
   PROCESSING
   DONE
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
 }

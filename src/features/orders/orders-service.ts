@@ -183,16 +183,13 @@ export async function createOrder(input: CreateOrderInput, userId: string) {
     });
   });
 
-  // Check for low stock on each ordered variant
-  for (const item of input.items) {
-    const variant = await prisma.productVariant.findUnique({
-      where: { id: item.variantId },
-      select: { stock: true },
-    });
-    if (variant) {
-      await checkAndNotifyLowStock(item.variantId, variant.stock);
-    }
-  }
+  // Check for low stock on all ordered variants at once
+  const orderedVariantIds = input.items.map((i) => i.variantId);
+  const currentVariants = await prisma.productVariant.findMany({
+    where: { id: { in: orderedVariantIds } },
+    select: { id: true, stock: true },
+  });
+  await checkAndNotifyLowStock(currentVariants);
 
   return order;
 }
@@ -315,7 +312,6 @@ export async function updateOrderStatus(id: string, status: OrderStatus, userId:
     where: { id },
     include: {
       items: true,
-      user: { select: { id: true, username: true } },
     },
   });
   if (!existing) throw new Error("Order not found");
@@ -358,6 +354,10 @@ export async function updateOrderStatus(id: string, status: OrderStatus, userId:
   });
 
   // Send notifications to all other users
+  const actingUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { username: true },
+  });
   const orderNumber = existing.orderNumber;
   const statusLabel = ORDER_STATUS_LABELS[status];
   const notificationTitle = `Order #${orderNumber}`;
@@ -378,9 +378,9 @@ export async function updateOrderStatus(id: string, status: OrderStatus, userId:
         return `${variant.product.name} (${variant.color}/${variant.size}): ${variant.stock}`;
       })
     );
-    notificationBody = `Completed by ${existing.user?.username || 'a user'}. Current stock — ${stockInfo.join("; ")}`;
+    notificationBody = `Completed by ${actingUser?.username || 'a user'}. Current stock — ${stockInfo.join("; ")}`;
   } else {
-    notificationBody = `Status updated to "${statusLabel}" by ${existing.user?.username || 'a user'}`;
+    notificationBody = `Status updated to "${statusLabel}" by ${actingUser?.username || 'a user'}`;
   }
 
   // Get all users except the one who made the change
@@ -392,7 +392,7 @@ export async function updateOrderStatus(id: string, status: OrderStatus, userId:
   // Create notifications in DB and send push notifications
   for (const user of otherUsers) {
     await createNotification(user.id, notificationTitle, notificationBody, id);
-    await sendNotification(user.id, notificationTitle, notificationBody, id).catch(() => {
+    await sendNotification(user.id, notificationTitle, notificationBody, id, `order-${id}`).catch(() => {
       // Ignore push notification errors - they're best effort
     });
   }
