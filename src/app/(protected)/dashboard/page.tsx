@@ -1,6 +1,7 @@
 import { getDashboardStats } from "@/features/dashboard/dashboard-service";
 import { DashboardWidgets } from "@/features/dashboard/dashboard-widgets";
 import { AnalyticsChart } from "@/features/dashboard/analytics-chart";
+import { InventorySummary } from "@/features/dashboard/inventory-summary";
 import { RecentOrders } from "@/features/dashboard/recent-orders";
 import { Header } from "@/components/header";
 import { auth } from "@/auth";
@@ -56,8 +57,17 @@ export default async function DashboardPage() {
                 outOfStockProducts: stats.outOfStockProducts,
               }}
             />
-            <RecentOrders />
+            <InventorySummary
+              initialStats={{
+                totalProducts: stats.totalProducts,
+                totalVariants: stats.totalVariants,
+                totalStockUnits: stats.totalStockUnits,
+                lowStockProducts: stats.lowStockProducts,
+                outOfStockProducts: stats.outOfStockProducts,
+              }}
+            />
           </div>
+          <RecentOrders />
         </div>
       </div>
     </div>
