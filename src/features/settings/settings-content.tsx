@@ -35,7 +35,7 @@ export function SettingsContent({ name, username }: SettingsContentProps) {
         </div>
       </div>
 
-      <Tabs defaultValue="profile" storageKey={TAB_STORAGE_KEY}>
+      <Tabs defaultValue="account" storageKey={TAB_STORAGE_KEY}>
         <TabsList>
           <TabsTrigger value="account" icon={<User />}>
             Account
