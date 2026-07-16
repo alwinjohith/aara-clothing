@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ interface AccountSectionProps {
 }
 
 export function AccountSection({ name, username }: AccountSectionProps) {
+  const { update } = useSession();
   const [isEditingName, setIsEditingName] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
@@ -57,6 +58,7 @@ export function AccountSection({ name, username }: AccountSectionProps) {
       toast.success("Profile updated successfully");
       setIsEditingName(false);
       nameForm.reset({ name: data.name });
+      await update({ name: data.name });
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
