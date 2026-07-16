@@ -71,3 +71,29 @@ export async function getRecentOrders(limit = 5) {
     },
   });
 }
+
+export async function getLowStockProducts() {
+  const variants = await prisma.productVariant.findMany({
+    where: {
+      product: { deletedAt: null },
+    },
+    select: {
+      id: true,
+      stock: true,
+      color: true,
+      size: true,
+      product: { select: { id: true, name: true } },
+    },
+    orderBy: { stock: "asc" },
+  });
+
+  return variants.map((v) => ({
+    variantId: v.id,
+    productName: v.product.name,
+    productId: v.product.id,
+    color: v.color,
+    size: v.size,
+    stock: v.stock,
+    status: v.stock === STOCK_THRESHOLDS.OUT ? "out_of_stock" : v.stock <= STOCK_THRESHOLDS.LOW ? "low_stock" : "in_stock",
+  }));
+}
