@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { STOCK_THRESHOLDS } from "@/lib/constants";
 
 export async function getDashboardStats() {
+  const orderWhere = { customer: { is: {} } };
+
   const [
     totalProducts,
     totalVariants,
@@ -37,14 +39,15 @@ export async function getDashboardStats() {
     }),
     prisma.order.count({
       where: {
+        ...orderWhere,
         createdAt: {
           gte: new Date(new Date().setHours(0, 0, 0, 0)),
         },
       },
     }),
-    prisma.order.count({ where: { status: "NOT_STARTED" } }),
-    prisma.order.count({ where: { status: "PROCESSING" } }),
-    prisma.order.count({ where: { status: "DONE" } }),
+    prisma.order.count({ where: { ...orderWhere, status: "NOT_STARTED" } }),
+    prisma.order.count({ where: { ...orderWhere, status: "PROCESSING" } }),
+    prisma.order.count({ where: { ...orderWhere, status: "DONE" } }),
   ]);
 
   return {
