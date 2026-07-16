@@ -1,10 +1,11 @@
 "use client";
 
-import { Settings, User, Shield, Monitor, Boxes, Info } from "lucide-react";
+import { Settings, User, Shield, Monitor, Boxes, Bell, Info } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ProfileSection } from "@/features/settings/profile-section";
 import { AppearanceSection } from "@/features/settings/appearance-section";
 import { InventorySection } from "@/features/settings/inventory-section";
+import { NotificationsSection } from "@/features/settings/notifications-section";
 import { AboutSection } from "@/features/settings/about-section";
 import { SecuritySection } from "@/features/settings/security-section";
 
@@ -49,6 +50,9 @@ export function SettingsContent({ name, username }: SettingsContentProps) {
           <TabsTrigger value="inventory" icon={<Boxes />}>
             Inventory
           </TabsTrigger>
+          <TabsTrigger value="notifications" icon={<Bell />}>
+            Notifications
+          </TabsTrigger>
           <TabsTrigger value="about" icon={<Info />}>
             About
           </TabsTrigger>
@@ -69,6 +73,10 @@ export function SettingsContent({ name, username }: SettingsContentProps) {
 
           <TabsContent value="inventory">
             <InventorySection />
+          </TabsContent>
+
+          <TabsContent value="notifications">
+            <NotificationsSection />
           </TabsContent>
 
           <TabsContent value="about">
