@@ -33,7 +33,7 @@ export function InventorySection() {
         const res = await fetch("/api/settings/inventory");
         const result = await res.json();
         if (result.success) {
-          setThreshold(result.data.lowStockThreshold);
+          fetchThreshold(result.data.lowStockThreshold);
           reset({ threshold: result.data.lowStockThreshold });
         }
       } catch {
