@@ -17,7 +17,7 @@ interface RecentOrder {
   orderNumber: number;
   status: string;
   createdAt: string;
-  customer: { id: string; name: string };
+  customer: { id: string; name: string } | null;
   items: { quantity: number }[];
 }
 
