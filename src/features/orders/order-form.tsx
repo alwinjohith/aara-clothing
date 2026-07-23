@@ -123,10 +123,7 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
     const variant = variants.find((v) => v.id === selectedVariantId);
     if (!variant) return;
 
-    if (quantity > variant.stock) {
-      toast.error(`Insufficient stock. Available: ${variant.stock}`);
-      return;
-    }
+
 
     if (items.some((i) => i.variantId === selectedVariantId)) {
       toast.error("This variant is already in the order");
@@ -157,10 +154,7 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
     setItems((prev) =>
       prev.map((item) => {
         if (item.variantId !== variantId) return item;
-        if (newQty > item.stock) {
-          toast.error(`Cannot exceed available stock of ${item.stock}`);
-          return { ...item, quantity: item.stock };
-        }
+
         return { ...item, quantity: newQty };
       })
     );
@@ -309,7 +303,7 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
               <Input
                 type="number"
                 min={1}
-                max={variants.find((v) => v.id === selectedVariantId)?.stock ?? 999}
+
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
                 className="min-w-0 flex-1"
@@ -353,7 +347,6 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
                   <Input
                     type="number"
                     min={1}
-                    max={item.stock}
                     value={item.quantity}
                     onChange={(e) =>
                       handleQuantityChange(item.variantId, Number(e.target.value))
@@ -385,7 +378,6 @@ export function OrderForm({ customerId, orderId, initialItems, initialStatus, mo
                       <Input
                         type="number"
                         min={1}
-                        max={item.stock}
                         value={item.quantity}
                         onChange={(e) =>
                           handleQuantityChange(item.variantId, Number(e.target.value))

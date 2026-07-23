@@ -139,11 +139,7 @@ export async function createOrder(input: CreateOrderInput, userId: string) {
       if (variant.product.deletedAt) {
         throw new Error(`Product "${variant.product.name}" has been deleted`);
       }
-      if (variant.stock < item.quantity) {
-        throw new Error(
-          `Insufficient stock for ${variant.product.name} (${variant.color}/${variant.size}). Available: ${variant.stock}, requested: ${item.quantity}`
-        );
-      }
+
     }
 
     for (const item of input.items) {
@@ -233,11 +229,7 @@ export async function updateOrder(id: string, input: UpdateOrderInput) {
     const originalQty = originalItem?.quantity ?? 0;
     const stockDiff = item.quantity - originalQty;
 
-    if (stockDiff > 0 && variant.stock < stockDiff) {
-      throw new Error(
-        `Insufficient stock for ${variant.product.name} (${variant.color}/${variant.size}). Available: ${variant.stock}, need additional: ${stockDiff}`
-      );
-    }
+
   }
 
   const duplicateVariantIds = input.items
